@@ -24,6 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final JwtUtil jwtUtil;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -38,6 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (CustomAuthenticationException e) {
             log.error("JWT 인증 실패: {}", e.getMessage());
+            jwtAuthenticationEntryPoint.commence(request, response, new CustomAuthenticationException(e.getMessage()));
         }
     }
     private String resolveToken(HttpServletRequest request) {
