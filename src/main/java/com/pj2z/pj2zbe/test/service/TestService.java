@@ -6,13 +6,12 @@ import com.pj2z.pj2zbe.test.dto.TestUpdateDto;
 import com.pj2z.pj2zbe.test.entity.Test;
 import com.pj2z.pj2zbe.test.repository.TestRepository;
 import com.pj2z.pj2zbe.user.entity.UserEntity;
-import com.pj2z.pj2zbe.user.repository.UserRepository;
+import com.pj2z.pj2zbe.user.repository.UserOriginalRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,10 +21,10 @@ public class TestService {
     TestRepository testRepository;
 
     @Autowired
-    UserRepository userRepository;
+    UserOriginalRepository userOriginalRepository;
 
     public TestResponseDto saveTestResults(TestDto requestDto) {
-        UserEntity user = userRepository.findById(requestDto.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        UserEntity user = userOriginalRepository.findById(requestDto.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
 //        List<Test> userTests = testRepository.findByUser(user);
 //        for (Test test : userTests){
@@ -62,7 +61,7 @@ public class TestService {
     }
 
     public TestResponseDto updateTestResults(TestUpdateDto updateDto){
-        UserEntity user = userRepository.findById(updateDto.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        UserEntity user = userOriginalRepository.findById(updateDto.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Test test = testRepository.findTopByUserOrderByCreatedAtDesc(user);
         if (test == null) {
