@@ -2,7 +2,7 @@ package com.pj2z.pj2zbe.user.service;
 
 import com.pj2z.pj2zbe.user.entity.UserEntity;
 import com.pj2z.pj2zbe.user.enums.UserGoalYN;
-import com.pj2z.pj2zbe.user.repository.UserRepository;
+import com.pj2z.pj2zbe.user.repository.UserOriginalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +12,12 @@ import java.util.Optional;
 public class UserService {
 
     @Autowired
-    UserRepository userRepository;
+    UserOriginalRepository userOriginalRepository;
 
 
     public boolean save(UserEntity user) {
         try {
-            userRepository.save(user);
+            userOriginalRepository.save(user);
             return true;
         }catch (Exception e) {
             return false;
@@ -31,11 +31,11 @@ public class UserService {
      * @return userEntity
      */
     public UserEntity getUserEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
+        return userOriginalRepository.findByEmail(email).orElse(null);
     }
 
     public UserEntity getUserId(Long id) {
-        return userRepository.findById(id).orElse(null);
+        return userOriginalRepository.findById(id).orElse(null);
     }
 
 
@@ -45,7 +45,7 @@ public class UserService {
      * 설      명      :
      ************************************************************************************/
     public UserEntity authenticate(String email, String password) {
-        Optional<UserEntity> user = userRepository.findByEmail(email);
+        Optional<UserEntity> user = userOriginalRepository.findByEmail(email);
 
         if (user.isPresent() && user.get().getPassword().equals(password)) {
             return user.orElse(null);
@@ -60,15 +60,15 @@ public class UserService {
      * @return boolean(가입 여부 )
      */
     public boolean register(UserEntity user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (userOriginalRepository.findByEmail(user.getEmail()).isPresent()) {
             return false;
         }
-        userRepository.save(user);
+        userOriginalRepository.save(user);
         return true;
     }
 
     public UserGoalYN getUserGoalYN(Long userid) {
-        Optional<UserEntity> user = userRepository.findById(userid);
+        Optional<UserEntity> user = userOriginalRepository.findById(userid);
         if (user.isEmpty()) {
             return null;
         }else {

@@ -6,7 +6,7 @@ import com.pj2z.pj2zbe.heart.dto.response.HeartResponse;
 import com.pj2z.pj2zbe.heart.entity.Heart;
 import com.pj2z.pj2zbe.heart.repository.HeartRepository;
 import com.pj2z.pj2zbe.user.entity.UserEntity;
-import com.pj2z.pj2zbe.user.repository.UserRepository;
+import com.pj2z.pj2zbe.user.repository.UserOriginalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +18,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class HeartService {
 
-    private final UserRepository userRepository;
+    private final UserOriginalRepository userOriginalRepository;
     private final HeartRepository heartRepository;
 
     @Transactional
     public void saveHeart(HeartSaveRequest request) {
-        UserEntity user = userRepository.findById(request.userId())
+        UserEntity user = userOriginalRepository.findById(request.userId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Heart heart = Heart.builder()

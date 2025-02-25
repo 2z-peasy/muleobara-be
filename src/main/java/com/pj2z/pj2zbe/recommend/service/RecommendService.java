@@ -1,6 +1,5 @@
 package com.pj2z.pj2zbe.recommend.service;
 
-import com.pj2z.pj2zbe.common.exception.TestNotFoundException;
 import com.pj2z.pj2zbe.common.exception.UserNotFoundException;
 import com.pj2z.pj2zbe.goal.entity.GoalEntity;
 import com.pj2z.pj2zbe.goal.entity.UserGoalEntity;
@@ -13,7 +12,7 @@ import com.pj2z.pj2zbe.test.entity.Test;
 import com.pj2z.pj2zbe.test.repository.TestRepository;
 import com.pj2z.pj2zbe.user.entity.UserEntity;
 import com.pj2z.pj2zbe.user.enums.UserGoalYN;
-import com.pj2z.pj2zbe.user.repository.UserRepository;
+import com.pj2z.pj2zbe.user.repository.UserOriginalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +31,7 @@ import java.util.List;
 public class RecommendService {
 
     private final RestTemplate restTemplate;
-    private final UserRepository userRepository;
+    private final UserOriginalRepository userOriginalRepository;
     private final TestRepository testRepository;
     private final UserGoalRepository userGoalRepository;
 
@@ -46,7 +45,7 @@ public class RecommendService {
     private String promptTemplate;
 
     public RecommendResponse getRecommendation(RecommendRequest request) {
-        UserEntity user = userRepository.findById(request.userId())
+        UserEntity user = userOriginalRepository.findById(request.userId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Test test = testRepository.findTopByUserIdOrderByCreatedAtDesc(request.userId());
