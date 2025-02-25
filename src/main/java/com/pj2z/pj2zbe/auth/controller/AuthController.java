@@ -1,6 +1,7 @@
 package com.pj2z.pj2zbe.auth.controller;
 
 import com.pj2z.pj2zbe.auth.controller.dto.request.LoginRequest;
+import com.pj2z.pj2zbe.auth.controller.dto.request.RefreshTokenRequest;
 import com.pj2z.pj2zbe.auth.controller.dto.request.SignupRequest;
 import com.pj2z.pj2zbe.auth.controller.dto.response.SignupResponse;
 import com.pj2z.pj2zbe.auth.controller.dto.response.TokenResponse;
@@ -28,6 +29,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
         TokenResponse response = authService.login(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenResponse> refreshAccessToken(@Valid @RequestBody RefreshTokenRequest request) {
+        TokenResponse response = authService.refreshAccessToken(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
