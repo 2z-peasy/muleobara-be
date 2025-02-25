@@ -1,6 +1,6 @@
 package com.pj2z.pj2zbe.common.jwt;
 
-import com.pj2z.pj2zbe.auth.dto.response.TokenResponse;
+import com.pj2z.pj2zbe.auth.controller.dto.response.TokenResponse;
 import com.pj2z.pj2zbe.auth.entity.User;
 import com.pj2z.pj2zbe.auth.repository.UserRepository;
 import com.pj2z.pj2zbe.common.exception.CustomAuthenticationException;
