@@ -24,8 +24,8 @@ public class KakaoService {
     @Value("${kakao.client_id}")
     private String clientId;
 
-    private final String KAUTH_TOKEN_URL_HOST = "https://kauth.kakao.com"; // 액세스 토큰을 발급받기 위한 서버
-    private final String KAUTH_USER_URL_HOST = "https://kapi.kakao.com"; // 사용자 정보를 받아오기 위한 서버
+    private static final String KAUTH_TOKEN_URL_HOST = "https://kauth.kakao.com"; // 액세스 토큰을 발급받기 위한 서버
+    private static final String KAUTH_USER_URL_HOST = "https://kapi.kakao.com"; // 사용자 정보를 받아오기 위한 서버
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
@@ -50,7 +50,7 @@ public class KakaoService {
 
     public KakaoUserInfo getUserInfo(String accessToken) {
 
-        KakaoUserInfo userInfo = WebClient.create(KAUTH_USER_URL_HOST)
+        return WebClient.create(KAUTH_USER_URL_HOST)
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
@@ -61,8 +61,6 @@ public class KakaoService {
                 .retrieve()
                 .bodyToMono(KakaoUserInfo.class)
                 .block();
-
-        return userInfo;
     }
 
     @Transactional
