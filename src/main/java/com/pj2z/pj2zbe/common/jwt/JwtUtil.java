@@ -30,6 +30,7 @@ public class JwtUtil {
     public static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 7일
 
     private final UserRepository userRepository;
+    private final RefreshTokenService refreshTokenService;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -49,6 +50,7 @@ public class JwtUtil {
         String accessToken = generateAccessToken(userIdString, date);
         String refreshToken = generateRefreshToken(userIdString, date);
 
+        refreshTokenService.saveRefreshToken(userIdString, refreshToken);
 
         return TokenResponse.of(accessToken, refreshToken);
     }
