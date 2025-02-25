@@ -1,4 +1,4 @@
-package com.pj2z.pj2zbe.auth.dto.response;
+package com.pj2z.pj2zbe.auth.controller.dto.response;
 
 import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;

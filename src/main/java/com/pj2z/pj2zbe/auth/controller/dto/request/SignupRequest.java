@@ -1,4 +1,4 @@
-package com.pj2z.pj2zbe.auth.dto.request;
+package com.pj2z.pj2zbe.auth.controller.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 

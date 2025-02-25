@@ -1,7 +1,7 @@
 package com.pj2z.pj2zbe.auth.controller;
 
-import com.pj2z.pj2zbe.auth.dto.request.SignupRequest;
-import com.pj2z.pj2zbe.auth.dto.response.SignupResponse;
+import com.pj2z.pj2zbe.auth.controller.dto.request.SignupRequest;
+import com.pj2z.pj2zbe.auth.controller.dto.response.SignupResponse;
 import com.pj2z.pj2zbe.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
