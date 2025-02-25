@@ -1,7 +1,9 @@
 package com.pj2z.pj2zbe.auth.controller;
 
+import com.pj2z.pj2zbe.auth.controller.dto.request.LoginRequest;
 import com.pj2z.pj2zbe.auth.controller.dto.request.SignupRequest;
 import com.pj2z.pj2zbe.auth.controller.dto.response.SignupResponse;
+import com.pj2z.pj2zbe.auth.controller.dto.response.TokenResponse;
 import com.pj2z.pj2zbe.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,12 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest request) {
         SignupResponse response = authService.signup(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
+        TokenResponse response = authService.login(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
