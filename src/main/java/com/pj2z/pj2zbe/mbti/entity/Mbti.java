@@ -7,6 +7,8 @@ import com.pj2z.pj2zbe.mbti.entity.enums.MbtiType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +16,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @MbtiPairSum
+@Builder
+@AllArgsConstructor
 @Table(name = "mbtis")
 public class Mbti extends BaseTimeEntity {
 
@@ -58,6 +62,7 @@ public class Mbti extends BaseTimeEntity {
     @Max(100) @Min(0)
     @Column(nullable = false, name = "j_percent")
     private Long jPercent;
+
 
 }
 
