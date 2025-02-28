@@ -2,6 +2,7 @@ package com.pj2z.pj2zbe.mbti.controller;
 
 import com.pj2z.pj2zbe.common.jwt.JwtUtil;
 import com.pj2z.pj2zbe.mbti.dto.MbtiMakeRequest;
+import com.pj2z.pj2zbe.mbti.entity.Mbti;
 import com.pj2z.pj2zbe.mbti.service.MbtiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,22 @@ public class MbtiController {
         return ResponseEntity.ok(Map.of(
                 "mbti", request.getMbti(),
                 "message", "MBTI 정보가 저장되었습니다."
+        ));
+    }
+
+
+    @GetMapping("/")
+    public ResponseEntity<Object> selectUsersMbti(@RequestHeader("Authorization") String token){
+        token = token.replace("Bearer ", "");
+
+        if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
+        }
+        Long userId = Long.valueOf(jwtUtil.getUsernameFromToken(token));
+        Mbti mbti = mbtiService.selectUsersMbti(userId);
+        return ResponseEntity.ok(Map.of(
+                "mbti", mbti.getMbtiType()
         ));
     }
 
