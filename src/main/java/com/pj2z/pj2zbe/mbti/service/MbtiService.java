@@ -12,5 +12,16 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class MbtiService {
 
+    @Autowired
+    MbtiRepository mbtiRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    public void saveMbti(Long userId, MbtiMakeRequest mbti) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        mbtiRepository.save(mbti.toEntity(user));
+    }
 
 }

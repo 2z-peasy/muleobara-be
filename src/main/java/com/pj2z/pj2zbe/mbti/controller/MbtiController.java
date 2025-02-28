@@ -24,6 +24,21 @@ public class MbtiController {
         this.jwtUtil = jwtUtil;
     }
 
+    @PostMapping("/")
+    public ResponseEntity<Object> saveMbti(@RequestHeader("Authorization") String token, @RequestBody MbtiMakeRequest request){
+         token = token.replace("Bearer ", "");
+
+        if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
+        }
+        Long userId = Long.valueOf(jwtUtil.getUsernameFromToken(token));
+        mbtiService.saveMbti(userId, request);
+        return ResponseEntity.ok(Map.of(
+                "mbti", request.getMbti(),
+                "message", "MBTI 정보가 저장되었습니다."
+        ));
+    }
 
 
 
