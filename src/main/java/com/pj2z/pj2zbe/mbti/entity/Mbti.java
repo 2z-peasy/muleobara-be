@@ -1,5 +1,6 @@
 package com.pj2z.pj2zbe.mbti.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pj2z.pj2zbe.auth.entity.User;
 import com.pj2z.pj2zbe.common.entity.BaseTimeEntity;
 import com.pj2z.pj2zbe.mbti.core.MbtiPairSum;
@@ -11,6 +12,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -63,6 +68,18 @@ public class Mbti extends BaseTimeEntity {
     @Column(nullable = false, name = "j_percent")
     private Long jPercent;
 
+
+    @CreatedDate
+    @Column(updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime modifiedAt;
 
 }
 

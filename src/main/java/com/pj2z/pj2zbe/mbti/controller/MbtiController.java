@@ -2,9 +2,11 @@ package com.pj2z.pj2zbe.mbti.controller;
 
 import com.pj2z.pj2zbe.common.jwt.JwtUtil;
 import com.pj2z.pj2zbe.mbti.dto.MbtiMakeRequest;
+import com.pj2z.pj2zbe.mbti.dto.MbtilSelectAllResponse;
 import com.pj2z.pj2zbe.mbti.entity.Mbti;
 import com.pj2z.pj2zbe.mbti.service.MbtiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +58,27 @@ public class MbtiController {
                 "mbti", mbti.getMbtiType()
         ));
     }
+    @GetMapping("/all")
+    public ResponseEntity<Object> getUserMbtiList(@RequestHeader("Authorization") String token,
+                                                      @RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int size) {
+        token = token.replace("Bearer ", "");
 
+        if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
+        }
+        Long userId = Long.valueOf(jwtUtil.getUsernameFromToken(token));
+        try {
+            Page<MbtilSelectAllResponse> mbtiPage = mbtiService.getUserMbtiList(userId, page, size);
+            return ResponseEntity.ok(mbtiPage);
+        }catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "message", ex.getMessage()
+            ));
+        }
+
+    }
 
 
 }
