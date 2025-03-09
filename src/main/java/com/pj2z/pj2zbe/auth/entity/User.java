@@ -22,6 +22,10 @@ public class User extends BaseTimeEntity {
     private String password;
     private String nickname;
 
+    @Column(nullable = false,name = "GOAL_YN")
+    @Enumerated(EnumType.STRING)
+    private UserGoalYN userGoalYN;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -31,5 +35,6 @@ public class User extends BaseTimeEntity {
         this.email = email;
         this.password = password;
         this.role = Role.ROLE_USER;
+        this.userGoalYN = UserGoalYN.N;
     }
 }
