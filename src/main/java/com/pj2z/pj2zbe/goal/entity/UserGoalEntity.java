@@ -1,6 +1,6 @@
 package com.pj2z.pj2zbe.goal.entity;
 
-import com.pj2z.pj2zbe.user.entity.UserEntity;
+import com.pj2z.pj2zbe.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,12 +18,10 @@ public class UserGoalEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "goal_id", nullable = false)
     private GoalEntity goal;
-
-
 
 }

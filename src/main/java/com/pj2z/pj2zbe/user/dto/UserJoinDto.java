@@ -1,7 +1,7 @@
 package com.pj2z.pj2zbe.user.dto;
 
 import com.pj2z.pj2zbe.user.entity.UserEntity;
-import com.pj2z.pj2zbe.user.enums.UserGoalYN;
+import com.pj2z.pj2zbe.auth.entity.UserGoalYN;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -1,11 +1,11 @@
 package com.pj2z.pj2zbe.goal.service;
 
+import com.pj2z.pj2zbe.auth.entity.User;
+import com.pj2z.pj2zbe.auth.repository.UserRepository;
 import com.pj2z.pj2zbe.goal.entity.GoalEntity;
 import com.pj2z.pj2zbe.goal.entity.UserGoalEntity;
 import com.pj2z.pj2zbe.goal.repository.GoalRepository;
 import com.pj2z.pj2zbe.goal.repository.UserGoalRepository;
-import com.pj2z.pj2zbe.user.entity.UserEntity;
-import com.pj2z.pj2zbe.user.repository.UserOriginalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@ public class GoalService {
     UserGoalRepository  userGoalRepository;
 
     @Autowired
-    UserOriginalRepository userOriginalRepository;
+    UserRepository userRepository;
 
 
     public boolean updateUserGoals(Long userId, List<String> goalNames) {
@@ -54,7 +54,7 @@ public class GoalService {
                 // goalName에 해당하는 GoalEntity를 찾아서 추가
                 GoalEntity goalEntity = goalRepository.findByGoalName(goalName)
                         .orElseThrow(() -> new IllegalArgumentException("Goal not found: " + goalName));
-               UserEntity user = userOriginalRepository.findById(userId).get();
+               User user = userRepository.findById(userId).get();
                 UserGoalEntity userGoalEntity =  UserGoalEntity.builder()
                         .user(user)
                         .goal(goalEntity)

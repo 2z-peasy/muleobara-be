@@ -1,7 +1,7 @@
 package com.pj2z.pj2zbe.user.service;
 
 import com.pj2z.pj2zbe.user.entity.UserEntity;
-import com.pj2z.pj2zbe.user.enums.UserGoalYN;
+import com.pj2z.pj2zbe.auth.entity.UserGoalYN;
 import com.pj2z.pj2zbe.user.repository.UserOriginalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
