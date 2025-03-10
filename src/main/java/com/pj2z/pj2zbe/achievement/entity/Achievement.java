@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
-@Entity
+@Entity(name = "Achievements")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Achievement { //업적
@@ -40,6 +40,12 @@ public class Achievement { //업적
     public Achievement(User user, Long likeCount) {
         this.user = user;
         this.likeCount = likeCount;
+    }
+
+    @Builder
+    public Achievement(User user) {
+        this.user = user;
+        this.likeCount = 0L;
     }
 
     /*
