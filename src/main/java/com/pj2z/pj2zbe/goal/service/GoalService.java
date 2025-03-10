@@ -24,6 +24,7 @@ public class GoalService {
     UserRepository userRepository;
 
 
+
     public boolean updateUserGoals(Long userId, List<String> goalNames) {
         boolean result = false;
         try{
