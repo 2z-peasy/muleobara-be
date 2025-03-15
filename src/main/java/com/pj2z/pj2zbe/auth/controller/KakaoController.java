@@ -1,7 +1,7 @@
-package com.pj2z.pj2zbe.oauthKakao.controller;
+package com.pj2z.pj2zbe.auth.controller;
 
 import com.pj2z.pj2zbe.auth.controller.dto.response.TokenResponse;
-import com.pj2z.pj2zbe.oauthKakao.service.KakaoService;
+import com.pj2z.pj2zbe.auth.service.KakaoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/callback")
-public class KakaoLoginController {
+public class KakaoController {
 
     private final KakaoService kakaoService;
 
