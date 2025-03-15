@@ -1,4 +1,4 @@
-package com.pj2z.pj2zbe.auth.entity;
+package com.pj2z.pj2zbe.user.entity;
 
 import com.pj2z.pj2zbe.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;

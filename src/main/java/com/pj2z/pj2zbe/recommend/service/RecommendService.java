@@ -1,7 +1,7 @@
 package com.pj2z.pj2zbe.recommend.service;
 
-import com.pj2z.pj2zbe.auth.entity.User;
-import com.pj2z.pj2zbe.auth.repository.UserRepository;
+import com.pj2z.pj2zbe.user.entity.User;
+import com.pj2z.pj2zbe.user.repository.UserRepository;
 import com.pj2z.pj2zbe.goal.entity.GoalEntity;
 import com.pj2z.pj2zbe.goal.entity.UserGoalEntity;
 import com.pj2z.pj2zbe.goal.repository.UserGoalRepository;
@@ -11,7 +11,7 @@ import com.pj2z.pj2zbe.recommend.dto.request.ChatGPTRequest;
 import com.pj2z.pj2zbe.recommend.dto.request.RecommendRequest;
 import com.pj2z.pj2zbe.recommend.dto.response.ChatGPTResponse;
 import com.pj2z.pj2zbe.recommend.dto.response.RecommendResponse;
-import com.pj2z.pj2zbe.auth.entity.UserGoalYN;
+import com.pj2z.pj2zbe.user.entity.UserGoalYN;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

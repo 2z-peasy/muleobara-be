@@ -1,4 +1,4 @@
-package com.pj2z.pj2zbe.oauthKakao.controller.dto;
+package com.pj2z.pj2zbe.auth.controller.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

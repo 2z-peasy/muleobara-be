@@ -1,12 +1,12 @@
-package com.pj2z.pj2zbe.oauthKakao.service;
+package com.pj2z.pj2zbe.auth.service;
 
 import com.pj2z.pj2zbe.auth.controller.dto.response.TokenResponse;
-import com.pj2z.pj2zbe.auth.entity.Role;
-import com.pj2z.pj2zbe.auth.entity.User;
-import com.pj2z.pj2zbe.auth.repository.UserRepository;
+import com.pj2z.pj2zbe.user.entity.Role;
+import com.pj2z.pj2zbe.user.entity.User;
+import com.pj2z.pj2zbe.user.repository.UserRepository;
 import com.pj2z.pj2zbe.common.jwt.JwtUtil;
-import com.pj2z.pj2zbe.oauthKakao.controller.dto.KakaoTokenResDto;
-import com.pj2z.pj2zbe.oauthKakao.controller.dto.KakaoUserInfo;
+import com.pj2z.pj2zbe.auth.controller.dto.response.KakaoTokenResDto;
+import com.pj2z.pj2zbe.auth.controller.dto.response.KakaoUserInfo;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

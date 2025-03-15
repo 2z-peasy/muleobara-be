@@ -2,13 +2,11 @@ package com.pj2z.pj2zbe.achievement.service;
 
 import com.pj2z.pj2zbe.achievement.entity.Achievement;
 import com.pj2z.pj2zbe.achievement.repository.AchievementRepository;
-import com.pj2z.pj2zbe.auth.entity.User;
-import com.pj2z.pj2zbe.auth.repository.UserRepository;
+import com.pj2z.pj2zbe.user.entity.User;
+import com.pj2z.pj2zbe.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

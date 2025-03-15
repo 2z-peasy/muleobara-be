@@ -1,7 +1,7 @@
 package com.pj2z.pj2zbe.mbti.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.pj2z.pj2zbe.auth.entity.User;
+import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.common.entity.BaseTimeEntity;
 import com.pj2z.pj2zbe.mbti.core.MbtiPairSum;
 import com.pj2z.pj2zbe.mbti.entity.enums.MbtiType;

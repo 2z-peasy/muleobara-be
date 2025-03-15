@@ -1,7 +1,7 @@
 package com.pj2z.pj2zbe.mbti.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.pj2z.pj2zbe.auth.entity.User;
+import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.mbti.entity.Mbti;
 import com.pj2z.pj2zbe.mbti.entity.enums.*;
 import lombok.Data;

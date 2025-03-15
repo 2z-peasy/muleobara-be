@@ -1,7 +1,7 @@
 package com.pj2z.pj2zbe.goal.service;
 
-import com.pj2z.pj2zbe.auth.entity.User;
-import com.pj2z.pj2zbe.auth.repository.UserRepository;
+import com.pj2z.pj2zbe.user.entity.User;
+import com.pj2z.pj2zbe.user.repository.UserRepository;
 import com.pj2z.pj2zbe.goal.entity.GoalEntity;
 import com.pj2z.pj2zbe.goal.entity.UserGoalEntity;
 import com.pj2z.pj2zbe.goal.repository.GoalRepository;

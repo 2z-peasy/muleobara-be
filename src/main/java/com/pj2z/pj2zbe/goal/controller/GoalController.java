@@ -1,18 +1,12 @@
 package com.pj2z.pj2zbe.goal.controller;
 
-import com.pj2z.pj2zbe.auth.entity.User;
-import com.pj2z.pj2zbe.goal.dto.GoalResponseDto;
 import com.pj2z.pj2zbe.goal.dto.GoalUpdateDto;
 import com.pj2z.pj2zbe.goal.dto.GoalYNUpdateDto;
 import com.pj2z.pj2zbe.goal.service.GoalService;
-import com.pj2z.pj2zbe.auth.entity.UserGoalYN;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/goals")

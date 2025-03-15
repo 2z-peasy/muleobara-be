@@ -1,12 +1,11 @@
 package com.pj2z.pj2zbe.mbti.service;
 
-import com.pj2z.pj2zbe.auth.entity.User;
-import com.pj2z.pj2zbe.auth.repository.UserRepository;
+import com.pj2z.pj2zbe.user.entity.User;
+import com.pj2z.pj2zbe.user.repository.UserRepository;
 import com.pj2z.pj2zbe.mbti.dto.MbtiMakeRequest;
 import com.pj2z.pj2zbe.mbti.dto.MbtilSelectAllResponse;
 import com.pj2z.pj2zbe.mbti.entity.Mbti;
 import com.pj2z.pj2zbe.mbti.repository.MbtiRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
