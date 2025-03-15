@@ -21,17 +21,15 @@ public class Achievement { //업적
     @ColumnDefault("0")
     private Long likeCount= 0L;;
 
-
-
-
+    /*
+       초기값 설정
+     */
     @PrePersist
     public void setDefaultValues() {
         if (likeCount == null) {
             likeCount = 0L;
         }
-
     }
-
 
     /*
      엔티티 생성자
