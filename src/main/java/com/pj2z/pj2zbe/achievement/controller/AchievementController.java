@@ -12,21 +12,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/achievement")
+@RequestMapping("/api/achievements")
+@RequiredArgsConstructor
 public class AchievementController {
 
-    @Autowired
-    AchievementService achievementService;
-
+    private final AchievementService achievementService;
 
     private final JwtUtil jwtUtil;
-    @Autowired
-    public AchievementController(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
 
-
-    @PostMapping("/like")
+    @PostMapping("/likes")
     public ResponseEntity<Object> addLike(@RequestHeader("Authorization") String token)
     {
         token = token.replace("Bearer ", "");
@@ -50,7 +44,7 @@ public class AchievementController {
         }
     }
 
-    @GetMapping("/like")
+    @GetMapping("/likes")
     public ResponseEntity<Object>  getLikeCount(@RequestHeader("Authorization") String token) {
         token = token.replace("Bearer ", "");
 
