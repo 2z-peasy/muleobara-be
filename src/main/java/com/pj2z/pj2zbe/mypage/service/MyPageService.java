@@ -1,7 +1,7 @@
 package com.pj2z.pj2zbe.mypage.service;
 
-import com.pj2z.pj2zbe.auth.entity.User;
-import com.pj2z.pj2zbe.auth.repository.UserRepository;
+import com.pj2z.pj2zbe.user.entity.User;
+import com.pj2z.pj2zbe.user.repository.UserRepository;
 import com.pj2z.pj2zbe.mypage.dto.MyPageResponseDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

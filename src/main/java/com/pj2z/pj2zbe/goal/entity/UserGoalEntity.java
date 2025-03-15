@@ -1,6 +1,6 @@
 package com.pj2z.pj2zbe.goal.entity;
 
-import com.pj2z.pj2zbe.auth.entity.User;
+import com.pj2z.pj2zbe.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
