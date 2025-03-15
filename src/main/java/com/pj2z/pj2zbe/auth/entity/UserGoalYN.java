@@ -1,4 +1,4 @@
-package com.pj2z.pj2zbe.user.enums;
+package com.pj2z.pj2zbe.auth.entity;
 
 public enum UserGoalYN {
     Y,   //전체목표 사용

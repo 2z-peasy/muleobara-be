@@ -1,9 +1,8 @@
 package com.pj2z.pj2zbe.goal.dto;
 
-import com.pj2z.pj2zbe.user.enums.UserGoalYN;
+import com.pj2z.pj2zbe.auth.entity.UserGoalYN;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 

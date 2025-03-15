@@ -1,18 +1,17 @@
 package com.pj2z.pj2zbe.recommend.service;
 
-import com.pj2z.pj2zbe.common.exception.UserNotFoundException;
+import com.pj2z.pj2zbe.auth.entity.User;
+import com.pj2z.pj2zbe.auth.repository.UserRepository;
 import com.pj2z.pj2zbe.goal.entity.GoalEntity;
 import com.pj2z.pj2zbe.goal.entity.UserGoalEntity;
 import com.pj2z.pj2zbe.goal.repository.UserGoalRepository;
+import com.pj2z.pj2zbe.mbti.entity.Mbti;
+import com.pj2z.pj2zbe.mbti.repository.MbtiRepository;
 import com.pj2z.pj2zbe.recommend.dto.request.ChatGPTRequest;
 import com.pj2z.pj2zbe.recommend.dto.request.RecommendRequest;
 import com.pj2z.pj2zbe.recommend.dto.response.ChatGPTResponse;
 import com.pj2z.pj2zbe.recommend.dto.response.RecommendResponse;
-import com.pj2z.pj2zbe.test.entity.Test;
-import com.pj2z.pj2zbe.test.repository.TestRepository;
-import com.pj2z.pj2zbe.user.entity.UserEntity;
-import com.pj2z.pj2zbe.user.enums.UserGoalYN;
-import com.pj2z.pj2zbe.user.repository.UserOriginalRepository;
+import com.pj2z.pj2zbe.auth.entity.UserGoalYN;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,8 +30,8 @@ import java.util.List;
 public class RecommendService {
 
     private final RestTemplate restTemplate;
-    private final UserOriginalRepository userOriginalRepository;
-    private final TestRepository testRepository;
+    private final UserRepository userRepository;
+    private final MbtiRepository mbtiRepository;
     private final UserGoalRepository userGoalRepository;
 
     @Value("${openai.api.url}")
@@ -45,20 +44,21 @@ public class RecommendService {
     private String promptTemplate;
 
     public RecommendResponse getRecommendation(RecommendRequest request) {
-        UserEntity user = userOriginalRepository.findById(request.userId())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Test test = testRepository.findTopByUserIdOrderByCreatedAtDesc(request.userId());
+        Mbti mbti = mbtiRepository.findTopByUserOrderByCreatedAtDesc(user)
+                .orElseThrow(() -> new RuntimeException("mbti not found"));
 
         List<String> goalNames = fetchUserGoals(user, request.userId());
 
-        String prompt = createPrompt(request, test, goalNames);
+        String prompt = createPrompt(request, mbti, goalNames);
         ChatGPTResponse gptResponse = sendRequestToGPT(prompt);
 
         return formatGPTResponse(gptResponse);
     }
 
-    private List<String> fetchUserGoals(UserEntity user, Long userId) {
+    private List<String> fetchUserGoals(User user, Long userId) {
         if (user.getUserGoalYN() == UserGoalYN.N) {
             return null;
         }
@@ -70,7 +70,7 @@ public class RecommendService {
                 .toList();
     }
 
-    private String createPrompt(RecommendRequest request, Test test, List<String> goalNames) {
+    private String createPrompt(RecommendRequest request, Mbti mbti, List<String> goalNames) {
         String retryPrompt = (request.retry() != null) ? request.retry() + "=> 다만 이 선택지는 제외하고 추천해주세요." : "";
         String setting = (request.setting() != null) ? request.setting() : "";
         String goals = (goalNames != null) ? String.join(", ", goalNames) : "";
@@ -82,13 +82,7 @@ public class RecommendService {
                 String.join(", ", request.choices()),
                 setting,
                 goals,
-                test.getExtroversion(),
-                test.getDecision(),
-                test.getRisk(),
-                test.getComfort(),
-                test.getTime(),
-                test.getSocial(),
-                test.getBudget()
+                mbti.getMbtiType() //담당자님 확인후 지워주세요. 2025.03.09 최경태
         );
     }
 
