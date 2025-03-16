@@ -1,4 +1,4 @@
-package com.pj2z.pj2zbe.recommend.config;
+package com.pj2z.pj2zbe.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
