@@ -21,12 +21,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RecommendService {
+
+    private static final String RETRY_SUFFIX = "=> 다만 이 선택지는 제외하고 추천해주세요.";
 
     private final RestTemplate restTemplate;
     private final UserRepository userRepository;
@@ -70,18 +73,20 @@ public class RecommendService {
     }
 
     private String createPrompt(RecommendRequest request, Mbti mbti, List<String> goalNames) {
-        String retryPrompt = (request.retry() != null) ? request.retry() + "=> 다만 이 선택지는 제외하고 추천해주세요." : "";
-        String setting = (request.setting() != null) ? request.setting() : "";
-        String goals = (goalNames != null) ? String.join(", ", goalNames) : "";
+        String retryPrompt = Optional.ofNullable(request.retry())
+                .map(r -> r + RETRY_SUFFIX)
+                .orElse("");
+        String setting = Optional.ofNullable(request.setting()).orElse("");
+        String goals = (goalNames == null || goalNames.isEmpty()) ? "" : String.join(", ", goalNames) ;
+        String choices = String.join(", ", request.choices());
 
         return String.format(
                 promptTemplate,
-                // 정규화도 고려해볼 수 있다. 다만 사용자가 어떻게 입력할지 모르므로 일단은 그대로 사용
                 retryPrompt,
-                String.join(", ", request.choices()),
+                choices,
                 setting,
                 goals,
-                mbti.getMbtiType() //담당자님 확인후 지워주세요. 2025.03.09 최경태
+                mbti.getMbtiType()
         );
     }
 
