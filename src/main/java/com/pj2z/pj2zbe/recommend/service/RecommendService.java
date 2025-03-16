@@ -23,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Slf4j
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -50,7 +49,7 @@ public class RecommendService {
         Mbti mbti = mbtiRepository.findTopByUserOrderByCreatedAtDesc(user)
                 .orElseThrow(() -> new RuntimeException("mbti not found"));
 
-        List<String> goalNames = fetchUserGoals(user, request.userId());
+        List<String> goalNames = fetchUserGoals(user.getUserGoalYN(), request.userId());
 
         String prompt = createPrompt(request, mbti, goalNames);
         ChatGPTResponse gptResponse = sendRequestToGPT(prompt);
@@ -58,8 +57,8 @@ public class RecommendService {
         return formatGPTResponse(gptResponse);
     }
 
-    private List<String> fetchUserGoals(User user, Long userId) {
-        if (user.getUserGoalYN() == UserGoalYN.N) {
+    private List<String> fetchUserGoals(UserGoalYN goalChoice, Long userId) {
+        if (goalChoice == UserGoalYN.N) {
             return null;
         }
         return userGoalRepository.findAllByUserId(userId)
