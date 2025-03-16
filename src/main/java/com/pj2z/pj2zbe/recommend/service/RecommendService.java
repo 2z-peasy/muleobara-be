@@ -1,5 +1,7 @@
 package com.pj2z.pj2zbe.recommend.service;
 
+import com.pj2z.pj2zbe.common.exception.UserNotFoundException;
+import com.pj2z.pj2zbe.mbti.exception.MbtiNotFoundException;
 import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.user.repository.UserRepository;
 import com.pj2z.pj2zbe.goal.entity.GoalEntity;
@@ -20,7 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -28,8 +32,6 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RecommendService {
-
-    private static final String RETRY_SUFFIX = "=> 다만 이 선택지는 제외하고 추천해주세요.";
 
     private final RestTemplate restTemplate;
     private final UserRepository userRepository;
@@ -47,10 +49,10 @@ public class RecommendService {
 
     public RecommendResponse getRecommendation(RecommendRequest request) {
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Mbti mbti = mbtiRepository.findTopByUserOrderByCreatedAtDesc(user)
-                .orElseThrow(() -> new RuntimeException("mbti not found"));
+                .orElseThrow(() -> new MbtiNotFoundException("mbti not found"));
 
         List<String> goalNames = fetchUserGoals(user.getUserGoalYN(), request.userId());
 
@@ -73,21 +75,34 @@ public class RecommendService {
     }
 
     private String createPrompt(RecommendRequest request, Mbti mbti, List<String> goalNames) {
-        String retryPrompt = Optional.ofNullable(request.retry())
-                .map(r -> r + RETRY_SUFFIX)
-                .orElse("");
+        String retryPrompt = Optional.ofNullable(request.retry()).orElse("");
         String setting = Optional.ofNullable(request.setting()).orElse("");
         String goals = (goalNames == null || goalNames.isEmpty()) ? "" : String.join(", ", goalNames) ;
         String choices = String.join(", ", request.choices());
 
-        return String.format(
-                promptTemplate,
-                retryPrompt,
-                choices,
-                setting,
-                goals,
-                mbti.getMbtiType()
-        );
+        return putValuesInPrompt(retryPrompt, choices, setting, goals, mbti);
+    }
+
+    private String putValuesInPrompt(String retry, String choices, String setting, String goals, Mbti mbti) {
+        Map<String, String> values = new HashMap<>();
+        values.put("retry", retry);
+        values.put("choices", choices);
+        values.put("setting", setting);
+        values.put("goals", goals);
+        values.put("mbti", mbti.getMbtiType().name());
+        values.put("epercent", String.valueOf(mbti.getEPercent()));
+        values.put("ipercent", String.valueOf(mbti.getIPercent()));
+        values.put("npercent", String.valueOf(mbti.getNPercent()));
+        values.put("spercent", String.valueOf(mbti.getSPercent()));
+        values.put("tpercent", String.valueOf(mbti.getTPercent()));
+        values.put("fpercent", String.valueOf(mbti.getFPercent()));
+        values.put("jpercent", String.valueOf(mbti.getJPercent()));
+        values.put("ppercent", String.valueOf(mbti.getPPercent()));
+
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            promptTemplate = promptTemplate.replace("{{" + entry.getKey() + "}}", entry.getValue());
+        }
+        return promptTemplate;
     }
 
     private ChatGPTResponse sendRequestToGPT(String prompt) {
