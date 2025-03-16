@@ -1,5 +1,6 @@
 package com.pj2z.pj2zbe.common.exception;
 
+import com.pj2z.pj2zbe.mbti.exception.MbtiNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             UserNotFoundException.class,
             TestNotFoundException.class,
-            GoalNotFoundException.class
+            GoalNotFoundException.class,
+            MbtiNotFoundException.class
     })
     public ResponseEntity<Map<String, Object>> handleNotFound(RuntimeException e) {
         log.error(e.getMessage());

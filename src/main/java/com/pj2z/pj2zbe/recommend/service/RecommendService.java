@@ -1,5 +1,7 @@
 package com.pj2z.pj2zbe.recommend.service;
 
+import com.pj2z.pj2zbe.common.exception.UserNotFoundException;
+import com.pj2z.pj2zbe.mbti.exception.MbtiNotFoundException;
 import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.user.repository.UserRepository;
 import com.pj2z.pj2zbe.goal.entity.GoalEntity;
@@ -20,10 +22,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -45,12 +49,12 @@ public class RecommendService {
 
     public RecommendResponse getRecommendation(RecommendRequest request) {
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Mbti mbti = mbtiRepository.findTopByUserOrderByCreatedAtDesc(user)
-                .orElseThrow(() -> new RuntimeException("mbti not found"));
+                .orElseThrow(() -> new MbtiNotFoundException("mbti not found"));
 
-        List<String> goalNames = fetchUserGoals(user, request.userId());
+        List<String> goalNames = fetchUserGoals(user.getUserGoalYN(), request.userId());
 
         String prompt = createPrompt(request, mbti, goalNames);
         ChatGPTResponse gptResponse = sendRequestToGPT(prompt);
@@ -58,8 +62,8 @@ public class RecommendService {
         return formatGPTResponse(gptResponse);
     }
 
-    private List<String> fetchUserGoals(User user, Long userId) {
-        if (user.getUserGoalYN() == UserGoalYN.N) {
+    private List<String> fetchUserGoals(UserGoalYN goalChoice, Long userId) {
+        if (goalChoice == UserGoalYN.N) {
             return null;
         }
         return userGoalRepository.findAllByUserId(userId)
@@ -71,19 +75,34 @@ public class RecommendService {
     }
 
     private String createPrompt(RecommendRequest request, Mbti mbti, List<String> goalNames) {
-        String retryPrompt = (request.retry() != null) ? request.retry() + "=> 다만 이 선택지는 제외하고 추천해주세요." : "";
-        String setting = (request.setting() != null) ? request.setting() : "";
-        String goals = (goalNames != null) ? String.join(", ", goalNames) : "";
+        String retryPrompt = Optional.ofNullable(request.retry()).orElse("");
+        String setting = Optional.ofNullable(request.setting()).orElse("");
+        String goals = (goalNames == null || goalNames.isEmpty()) ? "" : String.join(", ", goalNames) ;
+        String choices = String.join(", ", request.choices());
 
-        return String.format(
-                promptTemplate,
-                // 정규화도 고려해볼 수 있다. 다만 사용자가 어떻게 입력할지 모르므로 일단은 그대로 사용
-                retryPrompt,
-                String.join(", ", request.choices()),
-                setting,
-                goals,
-                mbti.getMbtiType() //담당자님 확인후 지워주세요. 2025.03.09 최경태
-        );
+        return putValuesInPrompt(retryPrompt, choices, setting, goals, mbti);
+    }
+
+    private String putValuesInPrompt(String retry, String choices, String setting, String goals, Mbti mbti) {
+        Map<String, String> values = new HashMap<>();
+        values.put("retry", retry);
+        values.put("choices", choices);
+        values.put("setting", setting);
+        values.put("goals", goals);
+        values.put("mbti", mbti.getMbtiType().name());
+        values.put("epercent", String.valueOf(mbti.getEPercent()));
+        values.put("ipercent", String.valueOf(mbti.getIPercent()));
+        values.put("npercent", String.valueOf(mbti.getNPercent()));
+        values.put("spercent", String.valueOf(mbti.getSPercent()));
+        values.put("tpercent", String.valueOf(mbti.getTPercent()));
+        values.put("fpercent", String.valueOf(mbti.getFPercent()));
+        values.put("jpercent", String.valueOf(mbti.getJPercent()));
+        values.put("ppercent", String.valueOf(mbti.getPPercent()));
+
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            promptTemplate = promptTemplate.replace("{{ " + entry.getKey() + " }}", entry.getValue());
+        }
+        return promptTemplate;
     }
 
     private ChatGPTResponse sendRequestToGPT(String prompt) {
