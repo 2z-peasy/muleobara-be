@@ -30,11 +30,22 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
+    private int baseTickets;
+
     @Builder
-    public User(String email, String password, Role role) {
+    public User(String email, String password) {
         this.email = email;
         this.password = password;
         this.role = Role.ROLE_USER;
         this.userGoalYN = UserGoalYN.N;
+        this.baseTickets = 5;
+    }
+
+    public void useBaseTickets() {
+        this.baseTickets = baseTickets - 1;
+    }
+
+    public void setBaseTicket(int baseTicket) {
+        this.baseTickets = baseTicket;
     }
 }
