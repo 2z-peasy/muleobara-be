@@ -1,5 +1,6 @@
 package com.pj2z.pj2zbe.goal.service;
 
+import com.pj2z.pj2zbe.goal.dto.GoalResponseDto;
 import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.user.repository.UserRepository;
 import com.pj2z.pj2zbe.goal.entity.GoalEntity;
@@ -71,27 +72,25 @@ public class GoalService {
         return result;
     }
 
-    public List<String> getGoalsByUserId(Long userId) {
+    public GoalResponseDto getGoalTotalDataByUserId(Long userId) {
         // usergoal 테이블에서 userId에 해당하는 모든 UserGoalEntity를 조회
-        try {
-            Optional<List<UserGoalEntity>> optionalGoals = userGoalRepository.findAllByUserId(userId);
+        List<String> goals = new ArrayList<>();
 
-            List<UserGoalEntity> userGoals = optionalGoals.orElse(new ArrayList<>());
-            if (userGoals.isEmpty()) {
-                return new ArrayList<String>();
-            }
+        User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-            // UserGoalEntity에서 GoalEntity만 추출
-            List<String> goals = new ArrayList<>();
+        Optional<List<UserGoalEntity>> optionalGoals = userGoalRepository.findAllByUserId(userId);
+
+        List<UserGoalEntity> userGoals = optionalGoals.orElse(new ArrayList<>());
+        if (userGoals.isEmpty()) {
+        }
+        else {
             for (UserGoalEntity userGoal : userGoals) {
                 goals.add(userGoal.getGoal().getGoalName());
             }
-            return goals;
         }
-        catch (Exception e){
+        return new GoalResponseDto(goals,user.getUserGoalYN());
 
-        }
-        return null;
     }
 
 
