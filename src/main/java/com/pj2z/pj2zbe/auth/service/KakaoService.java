@@ -71,7 +71,6 @@ public class KakaoService {
         User user = userRepository.findById(id).orElseGet(() ->
                 userRepository.save(User.builder()
                         .email(userInfo.getKakaoAccount().getEmail())
-                        .role(Role.ROLE_USER)
                         .build())
 
         );

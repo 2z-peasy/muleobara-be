@@ -51,6 +51,10 @@ public class RecommendService {
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
+        if (user.getBaseTickets() <= 0){
+            throw new IllegalArgumentException("No tickets left");
+        }
+
         Mbti mbti = mbtiRepository.findTopByUserOrderByCreatedAtDesc(user)
                 .orElseThrow(() -> new MbtiNotFoundException("mbti not found"));
 
@@ -58,6 +62,9 @@ public class RecommendService {
 
         String prompt = createPrompt(request, mbti, goalNames);
         ChatGPTResponse gptResponse = sendRequestToGPT(prompt);
+
+        user.useBaseTickets();
+        userRepository.save(user);
 
         return formatGPTResponse(gptResponse);
     }
