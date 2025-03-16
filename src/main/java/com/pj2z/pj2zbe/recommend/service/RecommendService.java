@@ -100,7 +100,7 @@ public class RecommendService {
         values.put("ppercent", String.valueOf(mbti.getPPercent()));
 
         for (Map.Entry<String, String> entry : values.entrySet()) {
-            promptTemplate = promptTemplate.replace("{{" + entry.getKey() + "}}", entry.getValue());
+            promptTemplate = promptTemplate.replace("{{ " + entry.getKey() + " }}", entry.getValue());
         }
         return promptTemplate;
     }
