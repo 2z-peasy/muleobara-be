@@ -1,48 +1,48 @@
 package com.pj2z.pj2zbe.goal.service;
 
 import com.pj2z.pj2zbe.goal.dto.GoalResponseDto;
+import com.pj2z.pj2zbe.goal.entity.UserGoal;
+import com.pj2z.pj2zbe.goal.entity.enums.GoalUsedYN;
 import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.user.repository.UserRepository;
 import com.pj2z.pj2zbe.goal.entity.GoalEntity;
-import com.pj2z.pj2zbe.goal.entity.UserGoalEntity;
 import com.pj2z.pj2zbe.goal.repository.GoalRepository;
 import com.pj2z.pj2zbe.goal.repository.UserGoalRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class GoalService {
 
-    @Autowired
-    GoalRepository goalRepository;
+    private final GoalRepository goalRepository;
 
-    @Autowired
-    UserGoalRepository  userGoalRepository;
+    private final UserGoalRepository  userGoalRepository;
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
 
 
-    public boolean updateUserGoals(Long userId, List<String> goalNames) {
-        boolean result = false;
-        try{
+    public void updateUserGoals(Long userId, List<String> goalNames) {
         // 1. 사용자와 관련된 기존 목표 목록을 가져옴
-        Optional<List<UserGoalEntity>> optionalGoals = userGoalRepository.findAllByUserId(userId);
+        User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-        List<UserGoalEntity> existingGoals = optionalGoals.orElse(new ArrayList<>());
+        Optional<List<UserGoal>> optionalGoals = userGoalRepository.findAllByUserId(userId);
+
+        List<UserGoal> existingGoals = optionalGoals.orElse(new ArrayList<>());
 
         // 2. 기존 목표 중에 삭제해야 할 목표를 찾기
         Set<String> goalNamesSet = new HashSet<>(goalNames); // 새로 온 목표 목록
-        Iterator<UserGoalEntity> iterator = existingGoals.iterator();
+        Iterator<UserGoal> iterator = existingGoals.iterator();
         while (iterator.hasNext()) {
-            UserGoalEntity userGoalEntity = iterator.next();
-            String existingGoalName = userGoalEntity.getGoal().getGoalName(); // GoalEntity의 이름
+            UserGoal userGoal = iterator.next();
+            String existingGoalName = userGoal.getGoal().getGoalName(); // GoalEntity의 이름
             if (!goalNamesSet.contains(existingGoalName)) {
                 // 새로 온 목표 목록에 없으면 삭제
-                userGoalRepository.delete(userGoalEntity);
+                userGoalRepository.delete(userGoal);
                 iterator.remove();
             }
         }
@@ -56,20 +56,16 @@ public class GoalService {
                 // goalName에 해당하는 GoalEntity를 찾아서 추가
                 GoalEntity goalEntity = goalRepository.findByGoalName(goalName)
                         .orElseThrow(() -> new IllegalArgumentException("Goal not found: " + goalName));
-               User user = userRepository.findById(userId).get();
-                UserGoalEntity userGoalEntity =  UserGoalEntity.builder()
-                        .user(user)
-                        .goal(goalEntity)
-                        .build();
+                if(goalEntity.getUsedYN() != GoalUsedYN.N) {
+                    UserGoal userGoal = UserGoal.builder()
+                            .user(user)
+                            .goal(goalEntity)
+                            .build();
 
-                userGoalRepository.save(userGoalEntity); // 새로운 UserGoalEntity 저장
+                    userGoalRepository.save(userGoal); // 새로운 UserGoalEntity 저장
+                }
             }
         }
-            result = true;
-        }
-        catch (Exception e){}
-
-        return result;
     }
 
     public GoalResponseDto getGoalTotalDataByUserId(Long userId) {
@@ -79,14 +75,14 @@ public class GoalService {
         User user = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-        Optional<List<UserGoalEntity>> optionalGoals = userGoalRepository.findAllByUserId(userId);
+        Optional<List<UserGoal>> optionalGoals = userGoalRepository.findAllByUserId(userId);
 
-        List<UserGoalEntity> userGoals = optionalGoals.orElse(new ArrayList<>());
-        if (userGoals.isEmpty()) {
-        }
-        else {
-            for (UserGoalEntity userGoal : userGoals) {
-                goals.add(userGoal.getGoal().getGoalName());
+        List<UserGoal> userGoals = optionalGoals.orElse(new ArrayList<>());
+        if (!userGoals.isEmpty()) {
+            for (UserGoal userGoal : userGoals) {
+                if(userGoal.getGoal().getUsedYN() != GoalUsedYN.N) { //자연스럽게 사용안하는 목표는 제거되도록
+                    goals.add(userGoal.getGoal().getGoalName());
+                }
             }
         }
         return new GoalResponseDto(goals,user.getUserGoalYN());

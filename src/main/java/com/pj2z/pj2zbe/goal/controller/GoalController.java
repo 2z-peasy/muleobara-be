@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,16 +42,16 @@ public class GoalController {
         }
         Long userId = Long.valueOf(jwtUtil.getUsernameFromToken(token));
 
-        /*
-        if(goalService.updateUserGoals(updateDto.getUserId(), updateDto.getGoals())){
+        try {
+            goalService.updateUserGoals(userId, updateDto.getGoals());
+
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new UserResponseDto(UserResponseMessage.SIGN_SUCCESS.getMessage(), updateDto.getUserId()));
+                    .body(null) ;
+        }catch (Exception ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", ex.getMessage()));
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("NO");
-        */
-        return null;
     }
 
 
@@ -78,7 +79,7 @@ public class GoalController {
 
 
     @PostMapping("/used")
-    public ResponseEntity<Object> userGoalYNUpdate(@RequestHeader("Authorization") String token, @RequestBody GoalYNUpdateDto GoalUsedYN){
+    public ResponseEntity<Object> userGoalYNUpdate(@RequestHeader("Authorization") String token, @RequestBody GoalYNUpdateDto goalUsedYN){
         token = token.replace("Bearer ", "");
 
         if (!jwtUtil.validateToken(token)) {
@@ -88,7 +89,7 @@ public class GoalController {
         Long userId = Long.valueOf(jwtUtil.getUsernameFromToken(token));
 
          try {
-             userService.updateUserGoalYN(userId, GoalUsedYN.isGoalYN() ? UserGoalYN.Y : UserGoalYN.N);
+             userService.updateUserGoalYN(userId, goalUsedYN.isGoalYN() ? UserGoalYN.Y : UserGoalYN.N);
 
              return ResponseEntity.ok(null);
         }
