@@ -35,11 +35,11 @@ public class GoalService {
         List<UserGoal> existingGoals = optionalGoals.orElse(new ArrayList<>());
 
         // 2. 기존 목표 중에 삭제해야 할 목표를 찾기
-        Set<String> goalNamesSet = new HashSet<>(goalNames); // 새로 온 목표 목록
+        Set<String> goalNamesSet = new HashSet<>(goalNames);
         Iterator<UserGoal> iterator = existingGoals.iterator();
         while (iterator.hasNext()) {
             UserGoal userGoal = iterator.next();
-            String existingGoalName = userGoal.getGoal().getGoalName(); // GoalEntity의 이름
+            String existingGoalName = userGoal.getGoal().getGoalName();
             if (!goalNamesSet.contains(existingGoalName)) {
                 // 새로 온 목표 목록에 없으면 삭제
                 userGoalRepository.delete(userGoal);
@@ -53,7 +53,6 @@ public class GoalService {
                     .anyMatch(userGoal -> userGoal.getGoal().getGoalName().equals(goalName));
 
             if (!isGoalExist) {
-                // goalName에 해당하는 GoalEntity를 찾아서 추가
                 GoalEntity goalEntity = goalRepository.findByGoalName(goalName)
                         .orElseThrow(() -> new IllegalArgumentException("Goal not found: " + goalName));
                 if(goalEntity.getUsedYN() != GoalUsedYN.N) {
@@ -62,14 +61,13 @@ public class GoalService {
                             .goal(goalEntity)
                             .build();
 
-                    userGoalRepository.save(userGoal); // 새로운 UserGoalEntity 저장
+                    userGoalRepository.save(userGoal);
                 }
             }
         }
     }
 
     public GoalResponseDto getGoalTotalDataByUserId(Long userId) {
-        // usergoal 테이블에서 userId에 해당하는 모든 UserGoalEntity를 조회
         List<String> goals = new ArrayList<>();
 
         User user = userRepository.findById(userId)
@@ -80,7 +78,7 @@ public class GoalService {
         List<UserGoal> userGoals = optionalGoals.orElse(new ArrayList<>());
         if (!userGoals.isEmpty()) {
             for (UserGoal userGoal : userGoals) {
-                if(userGoal.getGoal().getUsedYN() != GoalUsedYN.N) { //자연스럽게 사용안하는 목표는 제거되도록
+                if(userGoal.getGoal().getUsedYN() != GoalUsedYN.N) {
                     goals.add(userGoal.getGoal().getGoalName());
                 }
             }

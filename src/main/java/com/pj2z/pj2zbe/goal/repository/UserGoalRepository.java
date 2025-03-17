@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserGoalRepository extends JpaRepository<UserGoal,Long> {
-    Optional<List<UserGoal>> findAllByUserId(Long userId); // 복합 키 내부의 userId 기준 조회
+    Optional<List<UserGoal>> findAllByUserId(Long userId);
 
     Optional<UserGoal> findByUserId(Long userId);
 }
