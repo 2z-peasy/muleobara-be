@@ -2,6 +2,7 @@ package com.pj2z.pj2zbe.recommend.service;
 
 import com.pj2z.pj2zbe.common.exception.UserNotFoundException;
 import com.pj2z.pj2zbe.goal.entity.UserGoal;
+import com.pj2z.pj2zbe.goal.entity.enums.GoalUsedYN;
 import com.pj2z.pj2zbe.mbti.exception.MbtiNotFoundException;
 import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.user.repository.UserRepository;
@@ -77,6 +78,7 @@ public class RecommendService {
                 .orElseThrow(() -> new IllegalArgumentException("No goals found for user"))
                 .stream()
                 .map(UserGoal::getGoal)
+                .filter(goal -> goal.getUsedYN() == GoalUsedYN.Y)
                 .map(GoalEntity::getGoalName)
                 .toList();
     }
