@@ -19,7 +19,7 @@ public class Achievement { //업적
 
     @Column(name = "like_count", nullable = false)
     @ColumnDefault("0")
-    private Long likeCount= 0L;;
+    private Long likeCount= 0L;
 
     /*
        초기값 설정
