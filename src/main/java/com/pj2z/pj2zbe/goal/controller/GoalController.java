@@ -28,12 +28,10 @@ public class GoalController {
 
     private final UserService userService;
 
-
     private final JwtUtil jwtUtil;
 
     @PostMapping("/update")
     public ResponseEntity<Object> userGoalUpdate(@RequestHeader("Authorization") String token,@RequestBody @Valid GoalUpdateDto updateDto){
-
         token = token.replace("Bearer ", "");
 
         if (!jwtUtil.validateToken(token)) {
@@ -44,9 +42,9 @@ public class GoalController {
 
         try {
             goalService.updateUserGoals(userId, updateDto.getGoals());
-
             return ResponseEntity.status(HttpStatus.OK)
                     .body(null) ;
+
         }catch (Exception ex){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", ex.getMessage()));
@@ -76,7 +74,6 @@ public class GoalController {
         }
 
     }
-
 
     @PostMapping("/used")
     public ResponseEntity<Object> userGoalYNUpdate(@RequestHeader("Authorization") String token, @RequestBody GoalYNUpdateDto goalUsedYN){
