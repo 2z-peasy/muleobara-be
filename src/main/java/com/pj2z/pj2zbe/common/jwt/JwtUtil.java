@@ -1,9 +1,9 @@
 package com.pj2z.pj2zbe.common.jwt;
 
 import com.pj2z.pj2zbe.auth.controller.dto.response.TokenResponse;
+import com.pj2z.pj2zbe.common.exception.CustomAuthenticationException;
 import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.user.repository.UserRepository;
-import com.pj2z.pj2zbe.common.exception.CustomAuthenticationException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Base64;
@@ -28,6 +29,7 @@ public class JwtUtil {
 
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30; // 30분
     public static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 7일
+    private static final String BEARER_PREFIX = "Bearer ";
 
     private final UserRepository userRepository;
     private final RefreshTokenService refreshTokenService;
@@ -108,12 +110,19 @@ public class JwtUtil {
         return new UsernamePasswordAuthenticationToken(user.getId(), "", authorities);
     }
 
-    public String getUsernameFromToken(String refreshToken) {
-        Claims claims = Jwts.parserBuilder()
+    public String resolveToken(String token) {
+        if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
+            return token.substring(BEARER_PREFIX.length());
+        }
+        return null;
+    }
+
+    public Long getUserIdFromToken(String token) {
+        return Long.valueOf(Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJws(refreshToken)
-                .getBody();
-        return claims.getSubject();
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject());
     }
 }

@@ -2,9 +2,7 @@ package com.pj2z.pj2zbe.achievement.controller;
 
 import com.pj2z.pj2zbe.achievement.service.AchievementService;
 import com.pj2z.pj2zbe.common.jwt.JwtUtil;
-import com.pj2z.pj2zbe.common.template.RspTemplate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +27,7 @@ public class AchievementController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
         }
-        Long userId = Long.valueOf(jwtUtil.getUsernameFromToken(token));
+        Long userId = jwtUtil.getUserIdFromToken(token);
         try {
             Long likeCount = achievementService.addLikeConut(userId);
 
@@ -52,7 +50,7 @@ public class AchievementController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
         }
-        Long userId = Long.valueOf(jwtUtil.getUsernameFromToken(token));
+        Long userId = jwtUtil.getUserIdFromToken(token);
         try {
         return ResponseEntity.ok(Map.of(
                 "likeCount",achievementService.getLikeCount(userId)
