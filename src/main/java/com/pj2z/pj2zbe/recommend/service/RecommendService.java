@@ -1,19 +1,18 @@
 package com.pj2z.pj2zbe.recommend.service;
 
-import com.pj2z.pj2zbe.common.exception.UserNotFoundException;
-import com.pj2z.pj2zbe.mbti.exception.MbtiNotFoundException;
-import com.pj2z.pj2zbe.user.entity.User;
-import com.pj2z.pj2zbe.user.repository.UserRepository;
 import com.pj2z.pj2zbe.goal.entity.GoalEntity;
 import com.pj2z.pj2zbe.goal.entity.UserGoalEntity;
 import com.pj2z.pj2zbe.goal.repository.UserGoalRepository;
 import com.pj2z.pj2zbe.mbti.entity.Mbti;
+import com.pj2z.pj2zbe.mbti.exception.MbtiNotFoundException;
 import com.pj2z.pj2zbe.mbti.repository.MbtiRepository;
 import com.pj2z.pj2zbe.recommend.dto.request.ChatGPTRequest;
 import com.pj2z.pj2zbe.recommend.dto.request.RecommendRequest;
 import com.pj2z.pj2zbe.recommend.dto.response.ChatGPTResponse;
 import com.pj2z.pj2zbe.recommend.dto.response.RecommendResponse;
+import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.user.entity.UserGoalYN;
+import com.pj2z.pj2zbe.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,10 +46,7 @@ public class RecommendService {
     @Value("${openai.prompt}")
     private String promptTemplate;
 
-    public RecommendResponse getRecommendation(RecommendRequest request) {
-        User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-
+    public RecommendResponse getRecommendation(User user, RecommendRequest request) {
         if (user.getBaseTickets() <= 0){
             throw new IllegalArgumentException("No tickets left");
         }
@@ -58,7 +54,7 @@ public class RecommendService {
         Mbti mbti = mbtiRepository.findTopByUserOrderByCreatedAtDesc(user)
                 .orElseThrow(() -> new MbtiNotFoundException("mbti not found"));
 
-        List<String> goalNames = fetchUserGoals(user.getUserGoalYN(), request.userId());
+        List<String> goalNames = fetchUserGoals(user.getUserGoalYN(), user.getId());
 
         String prompt = createPrompt(request, mbti, goalNames);
         ChatGPTResponse gptResponse = sendRequestToGPT(prompt);
