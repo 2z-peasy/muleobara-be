@@ -2,6 +2,7 @@ package com.pj2z.pj2zbe.mbti.controller;
 
 import com.pj2z.pj2zbe.common.jwt.JwtUtil;
 import com.pj2z.pj2zbe.mbti.dto.MbtiMakeRequest;
+import com.pj2z.pj2zbe.mbti.dto.MbtiSelectDetailResponse;
 import com.pj2z.pj2zbe.mbti.dto.MbtilSelectAllResponse;
 import com.pj2z.pj2zbe.mbti.entity.Mbti;
 import com.pj2z.pj2zbe.mbti.service.MbtiService;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/users/mbti")
+@RequestMapping("/users/mbti")
 public class MbtiController {
 
     @Autowired
@@ -27,7 +28,7 @@ public class MbtiController {
         this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Object> saveMbti(@RequestHeader("Authorization") String token, @RequestBody MbtiMakeRequest request){
          token = token.replace("Bearer ", "");
 
@@ -44,7 +45,7 @@ public class MbtiController {
     }
 
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> selectUsersMbti(@RequestHeader("Authorization") String token){
         token = token.replace("Bearer ", "");
 
@@ -57,6 +58,18 @@ public class MbtiController {
         return ResponseEntity.ok(Map.of(
                 "mbti", mbti.getMbtiType()
         ));
+    }
+    @GetMapping("/detail")
+    public ResponseEntity<Object> selectUsersMbtidetail(@RequestHeader("Authorization") String token){
+        token = token.replace("Bearer ", "");
+
+        if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
+        }
+        Long userId = Long.valueOf(jwtUtil.getUsernameFromToken(token));
+        Mbti mbti = mbtiService.selectUsersMbti(userId);
+        return ResponseEntity.ok(new MbtiSelectDetailResponse(mbti));
     }
     @GetMapping("/all")
     public ResponseEntity<Object> getUserMbtiList(@RequestHeader("Authorization") String token,
