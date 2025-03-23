@@ -56,7 +56,7 @@ public class AuthService {
     }
 
     public TokenResponse refreshAccessToken(@Valid RefreshTokenRequest request) {
-        String username = jwtUtil.getUsernameFromToken(request.refreshToken());
+        String username = jwtUtil.getUserIdFromToken(request.refreshToken()).toString();
 
         // Redis에서 RefreshToken 조회 및 검증
         String storedToken = redisTemplate.opsForValue().get("refreshToken:" + username).toString();
