@@ -67,7 +67,7 @@ public class MbtiController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
         }
-        Long userId = Long.valueOf(jwtUtil.getUsernameFromToken(token));
+        Long userId = jwtUtil.getUserIdFromToken(token);
         Mbti mbti = mbtiService.selectUsersMbti(userId);
         return ResponseEntity.ok(new MbtiSelectDetailResponse(mbti));
     }
