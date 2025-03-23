@@ -24,11 +24,10 @@ public class GoalService {
 
     private final UserRepository userRepository;
 
-    public void updateUserGoals(Long userId, List<String> goalNames) {
+    public void updateUserGoals(User user, List<String> goalNames) {
         // 1. 사용자와 관련된 기존 목표 목록을 가져옴
-        User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-        List<UserGoal> existingGoals = userGoalRepository.findAllByUserId(userId).orElse(new ArrayList<>());
+
+        List<UserGoal> existingGoals = userGoalRepository.findAllByUserId(user.getId()).orElse(new ArrayList<>());
 
         // 2. 기존 목표 중에 삭제해야 할 목표를 찾기
         this.DeleteUserNotExistGoals(user,goalNames,existingGoals);
@@ -82,13 +81,10 @@ public class GoalService {
         userGoalRepository.saveAll(userGoalsToInsert); // 한 번에 저장
     }
 
-    public GoalResponseDto getGoalTotalDataByUserId(Long userId) {
+    public GoalResponseDto getGoalTotalDataByUserId(User user) {
         List<String> goals = new ArrayList<>();
 
-        User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-
-        Optional<List<UserGoal>> optionalGoals = userGoalRepository.findAllByUserId(userId);
+        Optional<List<UserGoal>> optionalGoals = userGoalRepository.findAllByUserId(user.getId());
 
         List<UserGoal> userGoals = optionalGoals.orElse(new ArrayList<>());
         if (!userGoals.isEmpty()) {

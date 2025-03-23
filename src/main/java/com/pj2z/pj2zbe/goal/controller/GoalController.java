@@ -1,12 +1,12 @@
 package com.pj2z.pj2zbe.goal.controller;
 
-import com.pj2z.pj2zbe.common.jwt.JwtUtil;
+import com.pj2z.pj2zbe.common.custom.UserCheck;
 import com.pj2z.pj2zbe.goal.dto.GoalResponseDto;
 import com.pj2z.pj2zbe.goal.dto.GoalUpdateDto;
 import com.pj2z.pj2zbe.goal.dto.GoalYNUpdateDto;
 import com.pj2z.pj2zbe.goal.service.GoalService;
+import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.user.entity.UserGoalYN;
-import com.pj2z.pj2zbe.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,22 +22,10 @@ public class GoalController {
 
     private final GoalService goalService;
 
-    private final UserService userService;
-
-    private final JwtUtil jwtUtil;
-
     @PostMapping("/update")
-    public ResponseEntity<Object> userGoalUpdate(@RequestHeader("Authorization") String token,@RequestBody @Valid GoalUpdateDto updateDto){
-        token = token.replace("Bearer ", "");
-
-        if (!jwtUtil.validateToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
-        }
-        Long userId = jwtUtil.getUserIdFromToken(token);
-
+    public ResponseEntity<Object> userGoalUpdate(@UserCheck User user, @RequestBody @Valid GoalUpdateDto updateDto){
         try {
-            goalService.updateUserGoals(userId, updateDto.getGoals());
+            goalService.updateUserGoals(user, updateDto.getGoals());
             return ResponseEntity.status(HttpStatus.OK)
                     .body(null) ;
 
@@ -50,17 +38,9 @@ public class GoalController {
 
 
     @GetMapping("/list")
-    public ResponseEntity<Object> userGoalGetList(@RequestHeader("Authorization") String token){
-        token = token.replace("Bearer ", "");
-
-        if (!jwtUtil.validateToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
-        }
-        Long userId = jwtUtil.getUserIdFromToken(token);
-
+    public ResponseEntity<Object> userGoalGetList(@UserCheck User user){
         try {
-            GoalResponseDto goalResponseDto = goalService.getGoalTotalDataByUserId(userId);
+            GoalResponseDto goalResponseDto = goalService.getGoalTotalDataByUserId(user);
 
             return ResponseEntity.ok(goalResponseDto);
         }catch (Exception ex){
@@ -72,17 +52,9 @@ public class GoalController {
     }
 
     @PostMapping("/used")
-    public ResponseEntity<Object> userGoalYNUpdate(@RequestHeader("Authorization") String token, @RequestBody GoalYNUpdateDto goalUsedYN){
-        token = token.replace("Bearer ", "");
-
-        if (!jwtUtil.validateToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
-        }
-        Long userId = jwtUtil.getUserIdFromToken(token);
-
+    public ResponseEntity<Object> userGoalYNUpdate(@UserCheck User user, @RequestBody GoalYNUpdateDto goalUsedYN){
          try {
-             userService.updateUserGoalYN(userId, goalUsedYN.isGoalYN() ? UserGoalYN.Y : UserGoalYN.N);
+             user.updateUserGoalYN(goalUsedYN.isGoalYN() ? UserGoalYN.Y : UserGoalYN.N);
 
              return ResponseEntity.ok(null);
         }

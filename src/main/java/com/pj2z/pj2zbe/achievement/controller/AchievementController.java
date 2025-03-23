@@ -1,11 +1,15 @@
 package com.pj2z.pj2zbe.achievement.controller;
 
 import com.pj2z.pj2zbe.achievement.service.AchievementService;
-import com.pj2z.pj2zbe.common.jwt.JwtUtil;
+import com.pj2z.pj2zbe.common.custom.UserCheck;
+import com.pj2z.pj2zbe.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -16,26 +20,15 @@ public class AchievementController {
 
     private final AchievementService achievementService;
 
-    private final JwtUtil jwtUtil;
-
     @PostMapping("/likes")
-    public ResponseEntity<Object> addLike(@RequestHeader("Authorization") String token)
-    {
-        token = token.replace("Bearer ", "");
-
-        if (!jwtUtil.validateToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
-        }
-        Long userId = jwtUtil.getUserIdFromToken(token);
+    public ResponseEntity<Object> addLike(@UserCheck User user) {
         try {
-            Long likeCount = achievementService.addLikeConut(userId);
+            Long likeCount = achievementService.addLikeConut(user);
 
             return ResponseEntity.ok(Map.of(
                     "likeCount", likeCount
             ));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                     "message", ex.getMessage()
             ));
@@ -43,25 +36,15 @@ public class AchievementController {
     }
 
     @GetMapping("/likes")
-    public ResponseEntity<Object>  getLikeCount(@RequestHeader("Authorization") String token) {
-        token = token.replace("Bearer ", "");
-
-        if (!jwtUtil.validateToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "로그인 정보가 유효하지 않습니다."));
-        }
-        Long userId = jwtUtil.getUserIdFromToken(token);
+    public ResponseEntity<Object> getLikeCount(@UserCheck User user) {
         try {
-        return ResponseEntity.ok(Map.of(
-                "likeCount",achievementService.getLikeCount(userId)
-                ));
-       }
-          catch (Exception ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                "message", ex.getMessage()
-        ));
+            return ResponseEntity.ok(Map.of(
+                    "likeCount", achievementService.getLikeCount(user)
+            ));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "message", ex.getMessage()
+            ));
+        }
     }
-    }
-
-
 }

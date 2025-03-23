@@ -33,6 +33,12 @@ public class GlobalExceptionHandler {
         return getErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
+    @ExceptionHandler({CustomAuthenticationException.class})
+    public ResponseEntity<Map<String, Object>> handleCustomAuthentication(RuntimeException e) {
+        log.error(e.getMessage());
+        return getErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
+
     @ExceptionHandler(ServerException.class)
     public ResponseEntity<Map<String, Object>> handleServerException(ServerException e) {
         log.error(e.getMessage());
