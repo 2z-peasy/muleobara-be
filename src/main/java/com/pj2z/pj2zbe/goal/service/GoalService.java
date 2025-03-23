@@ -71,7 +71,6 @@ public class GoalService {
                 .map(goalName -> {
                     GoalEntity goalEntity = goalRepository.findByGoalName(goalName)
                             .orElseThrow(() -> new IllegalArgumentException("Goal not found: " + goalName));
-                    System.out.println("Goal ID: " + goalEntity.getId());
                     return UserGoal.builder()
                             .user(user)
                             .goal(goalEntity)
