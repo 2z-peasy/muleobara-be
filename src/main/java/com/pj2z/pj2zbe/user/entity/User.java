@@ -48,7 +48,8 @@ public class User extends BaseTimeEntity {
     public void setBaseTicket(int baseTicket) {
         this.baseTickets = baseTicket;
     }
-    public void setGoalYN(UserGoalYN userGoalYN) {
+
+    public void updateUserGoalYN(UserGoalYN userGoalYN) {
         this.userGoalYN = userGoalYN;
     }
 }

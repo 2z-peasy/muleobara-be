@@ -1,14 +1,12 @@
 package com.pj2z.pj2zbe.goal.controller;
 
 import com.pj2z.pj2zbe.common.custom.UserCheck;
-import com.pj2z.pj2zbe.common.jwt.JwtUtil;
 import com.pj2z.pj2zbe.goal.dto.GoalResponseDto;
 import com.pj2z.pj2zbe.goal.dto.GoalUpdateDto;
 import com.pj2z.pj2zbe.goal.dto.GoalYNUpdateDto;
 import com.pj2z.pj2zbe.goal.service.GoalService;
 import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.user.entity.UserGoalYN;
-import com.pj2z.pj2zbe.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,10 +21,6 @@ import java.util.Map;
 public class GoalController {
 
     private final GoalService goalService;
-
-    private final UserService userService;
-
-    private final JwtUtil jwtUtil;
 
     @PostMapping("/update")
     public ResponseEntity<Object> userGoalUpdate(@UserCheck User user, @RequestBody @Valid GoalUpdateDto updateDto){
@@ -60,7 +54,7 @@ public class GoalController {
     @PostMapping("/used")
     public ResponseEntity<Object> userGoalYNUpdate(@UserCheck User user, @RequestBody GoalYNUpdateDto goalUsedYN){
          try {
-             userService.updateUserGoalYN(user, goalUsedYN.isGoalYN() ? UserGoalYN.Y : UserGoalYN.N);
+             user.updateUserGoalYN(goalUsedYN.isGoalYN() ? UserGoalYN.Y : UserGoalYN.N);
 
              return ResponseEntity.ok(null);
         }
