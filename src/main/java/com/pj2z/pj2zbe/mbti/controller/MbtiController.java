@@ -1,7 +1,6 @@
 package com.pj2z.pj2zbe.mbti.controller;
 
 import com.pj2z.pj2zbe.common.custom.UserCheck;
-import com.pj2z.pj2zbe.common.jwt.JwtUtil;
 import com.pj2z.pj2zbe.mbti.dto.MbtiMakeRequest;
 import com.pj2z.pj2zbe.mbti.dto.MbtiSelectDetailResponse;
 import com.pj2z.pj2zbe.mbti.dto.MbtilSelectAllResponse;
@@ -23,15 +22,8 @@ public class MbtiController {
     @Autowired
     MbtiService mbtiService;
 
-    private final JwtUtil jwtUtil;
-
-    @Autowired
-    public MbtiController(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
-
     @PostMapping
-    public ResponseEntity<Object> saveMbti(@UserCheck User user, @RequestBody MbtiMakeRequest request){
+    public ResponseEntity<Object> saveMbti(@UserCheck User user, @RequestBody MbtiMakeRequest request) {
         mbtiService.saveMbti(user, request);
         return ResponseEntity.ok(Map.of(
                 "mbti", request.getMbti(),
@@ -40,7 +32,7 @@ public class MbtiController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> selectUsersMbti(@UserCheck User user){
+    public ResponseEntity<Object> selectUsersMbti(@UserCheck User user) {
         Mbti mbti = mbtiService.selectUsersMbti(user);
         return ResponseEntity.ok(Map.of(
                 "mbti", mbti.getMbtiType()
@@ -48,7 +40,7 @@ public class MbtiController {
     }
 
     @GetMapping("/detail")
-    public ResponseEntity<Object> selectUsersMbtidetail(@UserCheck User user){
+    public ResponseEntity<Object> selectUsersMbtidetail(@UserCheck User user) {
         Mbti mbti = mbtiService.selectUsersMbti(user);
         return ResponseEntity.ok(new MbtiSelectDetailResponse(mbti));
     }
@@ -56,8 +48,7 @@ public class MbtiController {
     @GetMapping("/all")
     public ResponseEntity<Object> getUserMbtiList(@UserCheck User user,
                                                   @RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int size)
-    {
+                                                  @RequestParam(defaultValue = "10") int size) {
         try {
             Page<MbtilSelectAllResponse> mbtiPage = mbtiService.getUserMbtiList(user, page, size);
             return ResponseEntity.ok(mbtiPage);
