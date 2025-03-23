@@ -7,6 +7,8 @@ import com.pj2z.pj2zbe.mbti.dto.MbtilSelectAllResponse;
 import com.pj2z.pj2zbe.mbti.entity.Mbti;
 import com.pj2z.pj2zbe.mbti.service.MbtiService;
 import com.pj2z.pj2zbe.user.entity.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,12 +19,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/users/mbti")
+@Tag(name = "MBTI", description = "MBTI 정보에 대한 API")
 public class MbtiController {
 
     @Autowired
     MbtiService mbtiService;
 
     @PostMapping
+    @Operation(summary = "MBTI 정보 저장", description = "MBTI 정보 저장")
     public ResponseEntity<Object> saveMbti(@UserCheck User user, @RequestBody MbtiMakeRequest request) {
         mbtiService.saveMbti(user, request);
         return ResponseEntity.ok(Map.of(
@@ -32,6 +36,7 @@ public class MbtiController {
     }
 
     @GetMapping
+    @Operation(summary = "MBTI 정보 조회", description = "MBTI 정보 조회")
     public ResponseEntity<Object> selectUsersMbti(@UserCheck User user) {
         Mbti mbti = mbtiService.selectUsersMbti(user);
         return ResponseEntity.ok(Map.of(
@@ -40,12 +45,14 @@ public class MbtiController {
     }
 
     @GetMapping("/detail")
+    @Operation(summary = "MBTI 상세 정보 조회", description = "MBTI 상세 정보 조회")
     public ResponseEntity<Object> selectUsersMbtidetail(@UserCheck User user) {
         Mbti mbti = mbtiService.selectUsersMbti(user);
         return ResponseEntity.ok(new MbtiSelectDetailResponse(mbti));
     }
 
     @GetMapping("/all")
+    @Operation(summary = "모든 MBTI 정보 조회", description = "모든 MBTI 정보 조회")
     public ResponseEntity<Object> getUserMbtiList(@UserCheck User user,
                                                   @RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "10") int size) {
