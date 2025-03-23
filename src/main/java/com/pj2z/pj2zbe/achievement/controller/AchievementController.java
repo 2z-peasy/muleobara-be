@@ -18,12 +18,10 @@ public class AchievementController {
 
     private final AchievementService achievementService;
 
-    private final JwtUtil jwtUtil;
-
     @PostMapping("/likes")
     public ResponseEntity<Object> addLike(@UserCheck User user) {
         try {
-            Long likeCount = achievementService.addLikeConut(user.getId());
+            Long likeCount = achievementService.addLikeConut(user);
 
             return ResponseEntity.ok(Map.of(
                     "likeCount", likeCount
@@ -39,7 +37,7 @@ public class AchievementController {
     public ResponseEntity<Object> getLikeCount(@UserCheck User user) {
         try {
             return ResponseEntity.ok(Map.of(
-                    "likeCount", achievementService.getLikeCount(user.getId())
+                    "likeCount", achievementService.getLikeCount(user)
             ));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
