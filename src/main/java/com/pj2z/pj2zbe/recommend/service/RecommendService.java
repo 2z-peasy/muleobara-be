@@ -10,6 +10,7 @@ import com.pj2z.pj2zbe.recommend.dto.request.ChatGPTRequest;
 import com.pj2z.pj2zbe.recommend.dto.request.RecommendRequest;
 import com.pj2z.pj2zbe.recommend.dto.response.ChatGPTResponse;
 import com.pj2z.pj2zbe.recommend.dto.response.RecommendResponse;
+import com.pj2z.pj2zbe.recommend.exception.NoTicketsException;
 import com.pj2z.pj2zbe.user.entity.User;
 import com.pj2z.pj2zbe.user.entity.UserGoalYN;
 import com.pj2z.pj2zbe.user.repository.UserRepository;
@@ -48,7 +49,7 @@ public class RecommendService {
 
     public RecommendResponse getRecommendation(User user, RecommendRequest request) {
         if (user.getBaseTickets() <= 0){
-            throw new IllegalArgumentException("No tickets left");
+            throw new NoTicketsException("No tickets left");
         }
 
         Mbti mbti = mbtiRepository.findTopByUserOrderByCreatedAtDesc(user)

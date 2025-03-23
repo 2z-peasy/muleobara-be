@@ -1,6 +1,7 @@
 package com.pj2z.pj2zbe.common.exception;
 
 import com.pj2z.pj2zbe.mbti.exception.MbtiNotFoundException;
+import com.pj2z.pj2zbe.recommend.exception.NoTicketsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleNotFound(RuntimeException e) {
         log.error(e.getMessage());
         return getErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(NoTicketsException.class)
+    public ResponseEntity<Map<String, Object>> handleNoTickets(RuntimeException e) {
+        log.error(e.getMessage());
+        return getErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(ServerException.class)
