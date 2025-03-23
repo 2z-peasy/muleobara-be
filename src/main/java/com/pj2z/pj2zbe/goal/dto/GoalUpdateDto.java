@@ -10,9 +10,6 @@ import java.util.List;
 @Getter
 public class GoalUpdateDto {
 
-    @NotNull(message = "USERID는 필수입니다.")
-    private Long userId;
-
     private List<String> goals;
 
 }
