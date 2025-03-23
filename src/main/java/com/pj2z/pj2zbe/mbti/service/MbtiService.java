@@ -24,26 +24,18 @@ public class MbtiService {
     @Autowired
     UserRepository userRepository;
 
-    public void saveMbti(Long userId, MbtiMakeRequest mbti) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public void saveMbti(User user, MbtiMakeRequest mbti) {
         mbtiRepository.save(mbti.toEntity(user));
     }
 
-    public Mbti selectUsersMbti(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+    public Mbti selectUsersMbti(User user) {
         Mbti mbti = mbtiRepository.findTopByUserOrderByCreatedAtDesc(user)
                 .orElseThrow(() -> new RuntimeException("mbti not found"));
 
         return mbti;
     }
 
-    public Page<MbtilSelectAllResponse> getUserMbtiList(Long userId, int page, int size) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+    public Page<MbtilSelectAllResponse> getUserMbtiList(User user, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Mbti> mbtiPage = mbtiRepository.findByUserOrderByCreatedAtDesc(user, pageable);
         if (mbtiPage.isEmpty()) {
