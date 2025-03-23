@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,20 +44,17 @@ public class GoalService {
 
     public void DeleteUserNotExistGoals(User user, List<String> goalNames,List<UserGoal> existingGoals) {
         Set<String> goalNamesSet = new HashSet<>(goalNames);
-        Iterator<UserGoal> iterator = existingGoals.iterator();
-        while (iterator.hasNext()) {
-            UserGoal userGoal = iterator.next();
-            if(!user.getId().equals(userGoal.getUser().getId())) {
-                continue;
-            }
-            String existingGoalName = userGoal.getGoal().getGoalName();
-            if (!goalNamesSet.contains(existingGoalName)) {
-                // 새로 온 목표 목록에 없으면 삭제
-                userGoalRepository.delete(userGoal);
-                iterator.remove();
-            }
-        }
+
+        // 삭제해야 할 목표 목록을 한 번에 찾기
+        List<UserGoal> goalsToDelete = existingGoals.stream()
+                .filter(userGoal -> user.getId().equals(userGoal.getUser().getId()))
+                .filter(userGoal -> !goalNamesSet.contains(userGoal.getGoal().getGoalName())) // 새 목표 목록에 없는 경우
+                .toList();
+
+        // 한 번의 deleteAll 호출로 삭제
+        userGoalRepository.deleteAll(goalsToDelete);
     }
+
 
     //User로 한이유는 검증을 거치고 온 경우만 중복검증하기에 너무 과하다 판단
     public void insertUserGoals(User user, List<String> goalNames){
@@ -64,23 +62,25 @@ public class GoalService {
         this.insertUserGoals(user,goalNames,existingGoals);
     }
     public void insertUserGoals(User user, List<String> goalNames,List<UserGoal> existingGoals){
-        for (String goalName : goalNames) {
-            boolean isGoalExist = existingGoals.stream()
-                    .anyMatch(userGoal -> userGoal.getGoal().getGoalName().equals(goalName));
+        Set<String> existingGoalNames = existingGoals.stream()
+                .map(userGoal -> userGoal.getGoal().getGoalName())
+                .collect(Collectors.toSet());
 
-            if (!isGoalExist) {
-                GoalEntity goalEntity = goalRepository.findByGoalName(goalName)
-                        .orElseThrow(() -> new IllegalArgumentException("Goal not found: " + goalName));
-                if(goalEntity.getUsedYN() != GoalUsedYN.N) {
-                    UserGoal userGoal = UserGoal.builder()
+        List<UserGoal> userGoalsToInsert = goalNames.stream()
+                .filter(goalName -> !existingGoalNames.contains(goalName)) // 기존에 없는 것만
+                .map(goalName -> {
+                    GoalEntity goalEntity = goalRepository.findByGoalName(goalName)
+                            .orElseThrow(() -> new IllegalArgumentException("Goal not found: " + goalName));
+                    System.out.println("Goal ID: " + goalEntity.getId());
+                    return UserGoal.builder()
                             .user(user)
                             .goal(goalEntity)
                             .build();
+                })
+                .filter(goalEntity -> goalEntity.getGoal().getUsedYN() == GoalUsedYN.Y)
+                .toList();
 
-                    userGoalRepository.save(userGoal);
-                }
-            }
-        }
+        userGoalRepository.saveAll(userGoalsToInsert); // 한 번에 저장
     }
 
     public GoalResponseDto getGoalTotalDataByUserId(Long userId) {
