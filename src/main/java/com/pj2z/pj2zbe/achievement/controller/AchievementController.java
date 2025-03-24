@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/achievements")
+@RequestMapping("/achievements")
 @RequiredArgsConstructor
 @Tag(name = "업적 달성", description = "사용자의 업적 달성에 대한 API")
 public class AchievementController {
