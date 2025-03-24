@@ -82,20 +82,13 @@ public class GoalService {
     }
 
     public GoalResponseDto getGoalTotalDataByUserId(User user) {
-        List<String> goals = new ArrayList<>();
+        List<Long> goals = userGoalRepository.findAllByUserId(user.getId())
+                .orElse(Collections.emptyList()).stream()
+                .filter(userGoal -> userGoal.getGoal().getUsedYN() != GoalUsedYN.N)
+                .map(userGoal -> userGoal.getGoal().getId())
+                .collect(Collectors.toList());
 
-        Optional<List<UserGoal>> optionalGoals = userGoalRepository.findAllByUserId(user.getId());
-
-        List<UserGoal> userGoals = optionalGoals.orElse(new ArrayList<>());
-        if (!userGoals.isEmpty()) {
-            for (UserGoal userGoal : userGoals) {
-                if(userGoal.getGoal().getUsedYN() != GoalUsedYN.N) {
-                    goals.add(userGoal.getGoal().getGoalName());
-                }
-            }
-        }
-        return new GoalResponseDto(goals,user.getUserGoalYN());
-
+        return new GoalResponseDto(goals, user.getUserGoalYN());
     }
 
 
