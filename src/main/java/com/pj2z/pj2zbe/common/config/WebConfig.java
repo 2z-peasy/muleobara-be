@@ -24,6 +24,20 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3000", "http://localhost:8080")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true);
+
+        // Swagger UI 관련 경로에 대해서도 CORS 허용
+        // http://localhost:8080/swagger-ui/index.html#/
+        registry.addMapping("/swagger-ui/**")
+                .allowedOrigins("http://localhost:8080") // TODO": Swagger UI 서버주소에 맞게 추가
+                .allowedMethods("GET", "POST")
+                .allowedHeaders("*")
+                .allowCredentials(true);
+
+        registry.addMapping("/v3/api-docs/**")
+                .allowedOrigins("http://localhost:8080")
+                .allowedMethods("GET")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 
     @Override
