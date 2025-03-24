@@ -1,5 +1,6 @@
 package com.pj2z.pj2zbe.goal.service;
 
+import com.pj2z.pj2zbe.goal.dto.GoalEntityListResponseDto;
 import com.pj2z.pj2zbe.goal.dto.GoalResponseDto;
 import com.pj2z.pj2zbe.goal.entity.UserGoal;
 import com.pj2z.pj2zbe.goal.entity.enums.GoalUsedYN;
@@ -92,4 +93,10 @@ public class GoalService {
     }
 
 
+    public List<GoalEntityListResponseDto> getActiveGoals() {
+      return   goalRepository.findByUsedYN(GoalUsedYN.Y)
+                .stream()
+                .map(goal -> new GoalEntityListResponseDto(goal.getId(), goal.getCategory(), goal.getGoalName()))
+                .collect(Collectors.toList());
+    }
 }

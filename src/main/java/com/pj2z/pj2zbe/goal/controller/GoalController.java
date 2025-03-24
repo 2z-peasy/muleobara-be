@@ -1,6 +1,7 @@
 package com.pj2z.pj2zbe.goal.controller;
 
 import com.pj2z.pj2zbe.common.custom.UserCheck;
+import com.pj2z.pj2zbe.goal.dto.GoalEntityListResponseDto;
 import com.pj2z.pj2zbe.goal.dto.GoalResponseDto;
 import com.pj2z.pj2zbe.goal.dto.GoalUpdateDto;
 import com.pj2z.pj2zbe.goal.dto.GoalYNUpdateDto;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -66,5 +68,13 @@ public class GoalController {
                     "message", ex.getMessage()
             ));
         }
+    }
+
+
+    @GetMapping("/active")
+    @Operation(summary = "목표 조회", description = "현재 서비스중인 목표리스트 조회")
+    public ResponseEntity<List<GoalEntityListResponseDto>> getActiveGoals() {
+        List<GoalEntityListResponseDto> goals = goalService.getActiveGoals();
+        return ResponseEntity.ok(goals);
     }
 }
