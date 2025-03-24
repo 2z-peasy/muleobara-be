@@ -24,30 +24,30 @@ public class GoalService {
 
     private final UserRepository userRepository;
 
-    public void updateUserGoals(User user, List<String> goalNames) {
+    public void updateUserGoals(User user, List<Long> goalIds) {
         // 1. 사용자와 관련된 기존 목표 목록을 가져옴
 
         List<UserGoal> existingGoals = userGoalRepository.findAllByUserId(user.getId()).orElse(new ArrayList<>());
 
         // 2. 기존 목표 중에 삭제해야 할 목표를 찾기
-        this.DeleteUserNotExistGoals(user,goalNames,existingGoals);
+        this.DeleteUserNotExistGoals(user,goalIds,existingGoals);
 
         // 3. 새로 추가해야 할 목표를 찾아 추가
-        this.insertUserGoals(user,goalNames,existingGoals);
+        this.insertUserGoals(user,goalIds,existingGoals);
     }
 
-    public void DeleteUserNotExistGoals(User user, List<String> goalNames) {
+    public void DeleteUserNotExistGoals(User user, List<Long> goalIds) {
         List<UserGoal> existingGoals = userGoalRepository.findAllByUserId(user.getId()).orElse(new ArrayList<>());
-        this.DeleteUserNotExistGoals(user,goalNames,existingGoals);
+        this.DeleteUserNotExistGoals(user,goalIds,existingGoals);
     }
 
-    public void DeleteUserNotExistGoals(User user, List<String> goalNames,List<UserGoal> existingGoals) {
-        Set<String> goalNamesSet = new HashSet<>(goalNames);
+    public void DeleteUserNotExistGoals(User user, List<Long> goalIds,List<UserGoal> existingGoals) {
+        Set<Long> goalIdSet = new HashSet<>(goalIds);
 
         // 삭제해야 할 목표 목록을 한 번에 찾기
         List<UserGoal> goalsToDelete = existingGoals.stream()
                 .filter(userGoal -> user.getId().equals(userGoal.getUser().getId()))
-                .filter(userGoal -> !goalNamesSet.contains(userGoal.getGoal().getGoalName())) // 새 목표 목록에 없는 경우
+                .filter(userGoal -> !goalIdSet.contains(userGoal.getGoal().getId())) // 새 목표 목록에 없는 경우
                 .toList();
 
         // 한 번의 deleteAll 호출로 삭제
@@ -56,20 +56,20 @@ public class GoalService {
 
 
     //User로 한이유는 검증을 거치고 온 경우만 중복검증하기에 너무 과하다 판단
-    public void insertUserGoals(User user, List<String> goalNames){
+    public void insertUserGoals(User user, List<Long> goalIds){
         List<UserGoal> existingGoals = userGoalRepository.findAllByUserId(user.getId()).orElse(new ArrayList<>());
-        this.insertUserGoals(user,goalNames,existingGoals);
+        this.insertUserGoals(user,goalIds,existingGoals);
     }
-    public void insertUserGoals(User user, List<String> goalNames,List<UserGoal> existingGoals){
-        Set<String> existingGoalNames = existingGoals.stream()
-                .map(userGoal -> userGoal.getGoal().getGoalName())
+    public void insertUserGoals(User user, List<Long> goalIds,List<UserGoal> existingGoals){
+        Set<Long> existingGoalIds = existingGoals.stream()
+                .map(userGoal -> userGoal.getGoal().getId())
                 .collect(Collectors.toSet());
 
-        List<UserGoal> userGoalsToInsert = goalNames.stream()
-                .filter(goalName -> !existingGoalNames.contains(goalName)) // 기존에 없는 것만
-                .map(goalName -> {
-                    GoalEntity goalEntity = goalRepository.findByGoalName(goalName)
-                            .orElseThrow(() -> new IllegalArgumentException("Goal not found: " + goalName));
+        List<UserGoal> userGoalsToInsert = goalIds.stream()
+                .filter(goalId -> !existingGoalIds.contains(goalId)) // 기존에 없는 것만
+                .map(goalId -> {
+                    GoalEntity goalEntity = goalRepository.findById(goalId)
+                            .orElseThrow(() -> new IllegalArgumentException("Goal not found: " + goalId));
                     return UserGoal.builder()
                             .user(user)
                             .goal(goalEntity)

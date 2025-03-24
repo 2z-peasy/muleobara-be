@@ -10,6 +10,6 @@ import java.util.List;
 @Getter
 public class GoalUpdateDto {
 
-    private List<String> goals;
+    private List<Long> goals;
 
 }
