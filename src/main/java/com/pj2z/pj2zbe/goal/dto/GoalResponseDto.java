@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class GoalResponseDto {
-    List<String> goals ;
+    List<Long> goals ;
     UserGoalYN goalYN ;
 
 }
