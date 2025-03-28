@@ -25,9 +25,7 @@ public class PostService {
     private final VoteRepository voteRepository;
 
     public PostCreateResponse create(User user, PostCreateRequest request) {
-        if (request.voteForm().voteDeadline().isBefore(LocalDateTime.now())) {
-            throw new VoteDeadLineException("투표 마감일은 현재 시간 이후여야 합니다.");
-        }
+        validateVoteDeadLine(request.voteForm().voteDeadline());
 
         Post post = createPost(request.title(), request.content(), user.getId());
         postRepository.save(post);
@@ -40,5 +38,11 @@ public class PostService {
         voteRepository.save(vote);
 
         return new PostCreateResponse(post.getId());
+    }
+
+    private void validateVoteDeadLine(LocalDateTime voteDeadLine) {
+        if (voteDeadLine.isBefore(LocalDateTime.now())) {
+            throw new VoteDeadLineException("투표 마감일은 현재 시간 이후여야 합니다.");
+        }
     }
 }
