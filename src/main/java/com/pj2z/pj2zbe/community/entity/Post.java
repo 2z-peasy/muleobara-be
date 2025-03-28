@@ -27,8 +27,4 @@ public class Post extends BaseTimeEntity {
         this.content = content;
         this.authorId = authorId;
     }
-
-    public static Post createPost(String title, String content, Long authorId) {
-        return new Post(title, content, authorId);
-    }
 }

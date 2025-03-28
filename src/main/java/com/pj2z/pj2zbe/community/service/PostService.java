@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static com.pj2z.pj2zbe.community.entity.Post.createPost;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -27,10 +25,10 @@ public class PostService {
     public PostCreateResponse create(User user, PostCreateRequest request) {
         validateVoteDeadLine(request.voteForm().voteDeadline());
 
-        Post post = createPost(request.title(), request.content(), user.getId());
+        Post post = new Post(request.title(), request.content(), user.getId());
         postRepository.save(post);
 
-        Vote vote = Vote.createVote(
+        Vote vote = new Vote(
                 post.getId(),
                 request.voteForm().voteA(),
                 request.voteForm().voteB(),
