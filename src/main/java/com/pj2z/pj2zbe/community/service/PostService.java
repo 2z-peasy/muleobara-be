@@ -4,7 +4,7 @@ import com.pj2z.pj2zbe.community.dto.PostCreateRequest;
 import com.pj2z.pj2zbe.community.dto.PostCreateResponse;
 import com.pj2z.pj2zbe.community.entity.Post;
 import com.pj2z.pj2zbe.community.entity.Vote;
-import com.pj2z.pj2zbe.community.exception.VoteDeadLineException;
+import com.pj2z.pj2zbe.community.exception.VoteDeadlineException;
 import com.pj2z.pj2zbe.community.repository.PostRepository;
 import com.pj2z.pj2zbe.community.repository.VoteRepository;
 import com.pj2z.pj2zbe.user.entity.User;
@@ -23,7 +23,7 @@ public class PostService {
     private final VoteRepository voteRepository;
 
     public PostCreateResponse create(User user, PostCreateRequest request) {
-        validateVoteDeadLine(request.voteForm().voteDeadline());
+        validateVoteDeadline(request.voteForm().voteDeadline());
 
         Post post = new Post(request.title(), request.content(), user.getId());
         postRepository.save(post);
@@ -38,9 +38,9 @@ public class PostService {
         return new PostCreateResponse(post.getId());
     }
 
-    private void validateVoteDeadLine(LocalDateTime voteDeadLine) {
-        if (voteDeadLine.isBefore(LocalDateTime.now())) {
-            throw new VoteDeadLineException("투표 마감일은 현재 시간 이후여야 합니다.");
+    private void validateVoteDeadline(LocalDateTime voteDeadline) {
+        if (voteDeadline.isBefore(LocalDateTime.now())) {
+            throw new VoteDeadlineException("투표 마감일은 현재 시간 이후여야 합니다.");
         }
     }
 }
