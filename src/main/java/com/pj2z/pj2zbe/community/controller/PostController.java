@@ -7,6 +7,7 @@ import com.pj2z.pj2zbe.community.service.PostService;
 import com.pj2z.pj2zbe.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,6 @@ public class PostController {
     public ResponseEntity<PostCreateResponse> createPost(@UserCheck User user,
                                                          @Valid @RequestBody PostCreateRequest request) {
         PostCreateResponse response = postService.create(user, request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
