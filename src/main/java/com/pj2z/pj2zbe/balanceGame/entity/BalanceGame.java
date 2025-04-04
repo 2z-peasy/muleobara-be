@@ -25,4 +25,11 @@ public class BalanceGame {
         this.optionA = optionA;
         this.optionB = optionB;
     }
+
+
+    public void updateBalanceGame(String question, String optionA, String optionB) {
+         this.question = question;
+         this.optionA = optionA;
+         this.optionB = optionB;
+    }
 }
