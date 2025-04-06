@@ -34,6 +34,14 @@ public class VoteService {
         return VoteResponse.from(vote);
     }
 
+    @Transactional(readOnly = true)
+    public VoteResponse retrieve(Long voteId) {
+        Vote vote = voteRepository.findById(voteId)
+                .orElseThrow(()-> new VoteNotFoundException("해당 투표가 존재하지 않습니다."));
+
+        return VoteResponse.from(vote);
+    }
+
     private void checkVoteRecordExists(Long userId, Long voteId) {
         if (voteRecordRepository.existsByVoteIdAndUserId(voteId, userId)) {
             throw new AlreadyVotedException("이미 투표한 사용자입니다.");
