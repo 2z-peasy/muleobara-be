@@ -1,7 +1,7 @@
 package com.pj2z.pj2zbe.community.service;
 
 import com.pj2z.pj2zbe.community.dto.LikeResponse;
-import com.pj2z.pj2zbe.community.entity.Like;
+import com.pj2z.pj2zbe.community.entity.Likes;
 import com.pj2z.pj2zbe.community.repository.LikeRepository;
 import com.pj2z.pj2zbe.community.repository.PostRepository;
 import com.pj2z.pj2zbe.user.entity.User;
@@ -21,8 +21,8 @@ public class LikeService {
         validatePostExists(postId);
 
         if (!likeRepository.existsByPostIdAndUserId(postId, user.getId())) {
-            Like like = new Like(postId, user.getId());
-            likeRepository.save(like);
+            Likes likes = new Likes(postId, user.getId());
+            likeRepository.save(likes);
         } else {
             likeRepository.deleteByPostIdAndUserId(postId, user.getId()); // 이미 공감을 눌렀다면 취소
         }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Like extends BaseTimeEntity {
+public class Likes extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class Like extends BaseTimeEntity {
     private Long postId;
     private Long userId;
 
-    public Like(Long postId, Long userId) {
+    public Likes(Long postId, Long userId) {
         this.postId = postId;
         this.userId = userId;
     }
