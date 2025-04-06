@@ -1,7 +1,7 @@
 package com.pj2z.pj2zbe.common.exception;
 
 import com.pj2z.pj2zbe.community.exception.VoteDeadlineException;
-import com.pj2z.pj2zbe.community.exception.VoteNotFoundException;
+import com.pj2z.pj2zbe.community.exception.AlreadyVotedException;
 import com.pj2z.pj2zbe.mbti.exception.MbtiNotFoundException;
 import com.pj2z.pj2zbe.recommend.exception.NoTicketsException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             NoTicketsException.class,
             VoteDeadlineException.class,
-            VoteNotFoundException.class
+            AlreadyVotedException.class
     })
     public ResponseEntity<Map<String, Object>> handleBadRequest(RuntimeException e) {
         log.error(e.getMessage());
