@@ -6,8 +6,11 @@ import com.pj2z.pj2zbe.balanceGame.entity.BalanceGame;
 import com.pj2z.pj2zbe.balanceGame.service.BalanceGameService;
 import com.pj2z.pj2zbe.common.custom.UserCheck;
 import com.pj2z.pj2zbe.user.entity.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/balance-game")
@@ -20,23 +23,49 @@ public class BalanceGameController {
     }
     @GetMapping("/today")
     public ResponseEntity<Object> getTodaybalanceGame() {
-        BalanceGame todayGame = balanceGameService.getTodayGame();
-        return null;
+        try {
+            BalanceGame todayGame = balanceGameService.getTodayGame();
+
+            return ResponseEntity.ok(todayGame);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                    "message", ex.getMessage()
+            ));
+        }
     }
 
     @PostMapping
-    public ResponseEntity<BalanceGame> createGame(@RequestBody BalanceGameRequest request) {
-        return ResponseEntity.ok(balanceGameService.createBalanceGame(request));
+    public ResponseEntity<Object> createGame(@RequestBody BalanceGameRequest request) {
+        try {
+            BalanceGame makeGame = balanceGameService.createBalanceGame(request);
+            return ResponseEntity.ok(makeGame);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "message", ex.getMessage()
+                    ));
+        }
     }
 
     @PutMapping
-    public ResponseEntity<BalanceGame> updateGame(@RequestBody BalanceGameRequest request) {
-        return ResponseEntity.ok(balanceGameService.updateBalanceGame(request));
+    public ResponseEntity<Object> updateGame(@RequestBody BalanceGameRequest request) {
+        try {
+            BalanceGame updateGame = balanceGameService.updateBalanceGame(request);
+            return ResponseEntity.ok(updateGame);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "message", ex.getMessage()
+                    ));
+        }
+
     }
 
     @PostMapping("/vote")
-    public ResponseEntity<BalanceGame> voteGame(@UserCheck User user, @RequestBody BalanceGameVoteRequest request) {
-        balanceGameService.vote(user.getId(),request.getGameDate(), request.getChoice());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Object> voteGame(@UserCheck User user, @RequestBody BalanceGameVoteRequest request) {
+       // balanceGameService.vote(user.getId(),request.getGameDate(), request.getChoice());
+       // return ResponseEntity.ok().build();
+        return null;
     }
 }
