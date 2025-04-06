@@ -27,6 +27,11 @@ public class BalanceGameService {
                 .orElseThrow(() -> new RuntimeException("오늘의 밸런스 게임이 없습니다."));
     }
 
+    public BalanceGame getBalanceGameByDate(LocalDate date) {
+        return balanceGameRepository.findById(date)
+                .orElseThrow(() -> new RuntimeException("해당 날짜의 밸런스 게임이 없습니다."));
+    }
+
     public BalanceGame createBalanceGame(BalanceGameRequest request) {
         if (balanceGameRepository.existsById(request.getGameDate())) {
             throw new IllegalArgumentException("이미 해당 날짜의 밸런스 게임이 존재합니다.");

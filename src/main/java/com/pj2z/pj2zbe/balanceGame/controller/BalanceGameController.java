@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Map;
 
 @RestController
@@ -32,6 +34,19 @@ public class BalanceGameController {
                     .body(Map.of(
                     "message", ex.getMessage()
             ));
+        }
+    }
+
+    ///e.g. balance-game?date=2025-04-05
+    @GetMapping
+    public ResponseEntity<Object> getBalanceGame(@RequestParam("date") String dateStr) {
+        try {
+            LocalDate date = LocalDate.parse(dateStr);
+            BalanceGame game = balanceGameService.getBalanceGameByDate(date);
+            return ResponseEntity.ok(game);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", ex.getMessage()));
         }
     }
 
