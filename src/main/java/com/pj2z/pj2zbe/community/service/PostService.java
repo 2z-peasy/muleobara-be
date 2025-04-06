@@ -35,7 +35,7 @@ public class PostService {
                 request.voteForm().voteDeadline());
         voteRepository.save(vote);
 
-        return new PostCreateResponse(post.getId());
+        return new PostCreateResponse(post.getId(), vote.getId());
     }
 
     private void validateVoteDeadline(LocalDateTime voteDeadline) {
