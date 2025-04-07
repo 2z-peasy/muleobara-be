@@ -35,4 +35,12 @@ public class Vote extends BaseTimeEntity {
         this.voteB = voteB;
         this.voteDeadline = voteDeadline!= null ? voteDeadline : LocalDateTime.now().plusDays(7);
     }
+
+    public void updateAVoteCount(){
+        voteACount++;
+    }
+
+    public void updateBVoteCount(){
+        voteBCount++;
+    }
 }
