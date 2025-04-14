@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Map;
 
 @RestController
@@ -37,8 +36,8 @@ public class BalanceGameController {
         }
     }
 
-    ///e.g. balance-game?date=2025-04-05
-    @GetMapping
+    ///e.g. balance-game/?date=2025-04-05
+    @GetMapping("/")
     public ResponseEntity<Object> getBalanceGame(@UserCheck User user, @RequestParam("date") String dateStr) {
         try {
             LocalDate date = LocalDate.parse(dateStr);
@@ -50,9 +49,10 @@ public class BalanceGameController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<Object> createGame(@RequestBody BalanceGameRequest request) {
+    @PostMapping("/")
+    public ResponseEntity<Object> createGame(@UserCheck User user,@RequestBody BalanceGameRequest request) {
         try {
+
             BalanceGame makeGame = balanceGameService.createBalanceGame(request);
             return ResponseEntity.ok(makeGame);
         } catch (Exception ex) {
@@ -63,8 +63,8 @@ public class BalanceGameController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<Object> updateGame(@RequestBody BalanceGameRequest request) {
+    @PutMapping("/")
+    public ResponseEntity<Object> updateGame(@UserCheck User user,@RequestBody BalanceGameRequest request) {
         try {
             BalanceGame updateGame = balanceGameService.updateBalanceGame(request);
             return ResponseEntity.ok(updateGame);
