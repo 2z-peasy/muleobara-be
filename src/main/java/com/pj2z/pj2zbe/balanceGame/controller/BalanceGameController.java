@@ -24,7 +24,7 @@ public class BalanceGameController {
         this.balanceGameService = balanceGameService;
     }
     @GetMapping("/today")
-    public ResponseEntity<Object> getTodaybalanceGame() {
+    public ResponseEntity<Object> getTodaybalanceGame(@UserCheck User user) {
         try {
             BalanceGame todayGame = balanceGameService.getTodayGame();
 
@@ -39,7 +39,7 @@ public class BalanceGameController {
 
     ///e.g. balance-game?date=2025-04-05
     @GetMapping
-    public ResponseEntity<Object> getBalanceGame(@RequestParam("date") String dateStr) {
+    public ResponseEntity<Object> getBalanceGame(@UserCheck User user, @RequestParam("date") String dateStr) {
         try {
             LocalDate date = LocalDate.parse(dateStr);
             BalanceGame game = balanceGameService.getBalanceGameByDate(date);
