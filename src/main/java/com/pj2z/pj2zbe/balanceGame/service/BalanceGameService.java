@@ -1,6 +1,7 @@
 package com.pj2z.pj2zbe.balanceGame.service;
 
 import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameRequest;
+import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameVoteRequest;
 import com.pj2z.pj2zbe.balanceGame.entity.BalanceGameVote;
 import com.pj2z.pj2zbe.balanceGame.entity.BalanceGame;
 import com.pj2z.pj2zbe.balanceGame.entity.enums.BalanceGameVoteChoice;
@@ -55,8 +56,17 @@ public class BalanceGameService {
     }
 
 
-    public void vote(Long userid, LocalDate gameDate, BalanceGameVoteChoice choice) {
-        BalanceGameVote vote = new BalanceGameVote(userid, gameDate, choice);
+    public void vote(Long userid, BalanceGameVoteRequest request) {
+
+        balanceGameRepository.findById(request.getGameDate())
+                .orElseThrow(() -> new RuntimeException("오늘의 밸런스 게임이 없습니다."));
+
+        boolean alreadyVoted = balanceGameVoteRepository.existsByIdUserIdAndIdGameDate(userid, request.getGameDate());
+        if (alreadyVoted) {
+            throw new IllegalStateException("이미 투표한 게임입니다.");
+        }
+
+        BalanceGameVote vote = new BalanceGameVote(userid, request.getGameDate(), request.getChoice());
         balanceGameVoteRepository.save(vote);
     }
 }

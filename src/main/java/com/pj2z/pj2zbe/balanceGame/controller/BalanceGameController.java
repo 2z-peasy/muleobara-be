@@ -77,10 +77,17 @@ public class BalanceGameController {
 
     }
 
+    // 투표관련되서는 밸런스게임과 커뮤니티의 투표가 별도이며 밸런스게임 하나의 종속적인 투표기능이기 떄문에 합쳤습니다.
     @PostMapping("/vote")
     public ResponseEntity<Object> voteGame(@UserCheck User user, @RequestBody BalanceGameVoteRequest request) {
-       // balanceGameService.vote(user.getId(),request.getGameDate(), request.getChoice());
-       // return ResponseEntity.ok().build();
-        return null;
+        try {
+            balanceGameService.vote(user.getId(), request);
+            return ResponseEntity.ok("투표 완료");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "message", ex.getMessage()
+                    ));
+        }
     }
 }
