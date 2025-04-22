@@ -1,6 +1,7 @@
 package com.pj2z.pj2zbe.balanceGame.controller;
 
 import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameRequest;
+import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameResponse;
 import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameVoteRequest;
 import com.pj2z.pj2zbe.balanceGame.entity.BalanceGame;
 import com.pj2z.pj2zbe.balanceGame.service.BalanceGameService;
@@ -25,7 +26,7 @@ public class BalanceGameController {
     @GetMapping("/today")
     public ResponseEntity<Object> getTodaybalanceGame(@UserCheck User user) {
         try {
-            BalanceGame todayGame = balanceGameService.getTodayGame();
+            BalanceGameResponse todayGame = balanceGameService.getTodayGame(user.getId());
 
             return ResponseEntity.ok(todayGame);
         } catch (Exception ex) {
@@ -41,7 +42,7 @@ public class BalanceGameController {
     public ResponseEntity<Object> getBalanceGame(@UserCheck User user, @RequestParam("date") String dateStr) {
         try {
             LocalDate date = LocalDate.parse(dateStr);
-            BalanceGame game = balanceGameService.getBalanceGameByDate(date);
+            BalanceGameResponse game = balanceGameService.getBalanceGameByDate(date, user.getId());
             return ResponseEntity.ok(game);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -1,6 +1,7 @@
 package com.pj2z.pj2zbe.balanceGame.service;
 
 import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameRequest;
+import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameResponse;
 import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameVoteRequest;
 import com.pj2z.pj2zbe.balanceGame.entity.BalanceGameVote;
 import com.pj2z.pj2zbe.balanceGame.entity.BalanceGame;
@@ -10,6 +11,7 @@ import com.pj2z.pj2zbe.balanceGame.repository.BalanceGameVoteRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Service
 public class BalanceGameService {
@@ -22,15 +24,23 @@ public class BalanceGameService {
         this.balanceGameRepository = balanceGameRepository;
         this.balanceGameVoteRepository = balanceGameVoteRepository;
     }
-    public BalanceGame getTodayGame() {
+    public BalanceGameResponse getTodayGame(Long userId) {
         LocalDate today = LocalDate.now();
-        return balanceGameRepository.findById(today)
-                .orElseThrow(() -> new RuntimeException("오늘의 밸런스 게임이 없습니다."));
+        return getBalanceGameByDate(today, userId);
     }
 
-    public BalanceGame getBalanceGameByDate(LocalDate date) {
-        return balanceGameRepository.findById(date)
+    public BalanceGameResponse getBalanceGameByDate(LocalDate date, Long userId) {
+        return getBalanceGameResponse(date,userId);
+    }
+
+    public BalanceGameResponse getBalanceGameResponse(LocalDate date, Long userId) {
+        BalanceGame game = balanceGameRepository.findById(date)
                 .orElseThrow(() -> new RuntimeException("해당 날짜의 밸런스 게임이 없습니다."));
+
+        // 사용자의 투표 여부 확인
+        return balanceGameVoteRepository.findByIdUserIdAndIdGameDate(userId, date)
+                .map(vote -> new BalanceGameResponse(game, vote.getChoice())) // 투표한 경우
+                .orElse(new BalanceGameResponse(game));
     }
 
     public BalanceGame createBalanceGame(BalanceGameRequest request) {
