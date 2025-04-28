@@ -5,13 +5,12 @@ import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameResponse;
 import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameVoteRequest;
 import com.pj2z.pj2zbe.balanceGame.entity.BalanceGameVote;
 import com.pj2z.pj2zbe.balanceGame.entity.BalanceGame;
-import com.pj2z.pj2zbe.balanceGame.entity.enums.BalanceGameVoteChoice;
+import com.pj2z.pj2zbe.balanceGame.exception.*;
 import com.pj2z.pj2zbe.balanceGame.repository.BalanceGameRepository;
 import com.pj2z.pj2zbe.balanceGame.repository.BalanceGameVoteRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Service
 public class BalanceGameService {
@@ -30,12 +29,15 @@ public class BalanceGameService {
     }
 
     public BalanceGameResponse getBalanceGameByDate(LocalDate date, Long userId) {
+        if (date.isAfter(LocalDate.now())) {
+            throw new CannotViewFutureBalanceGameException();
+        }
         return getBalanceGameResponse(date,userId);
     }
 
     public BalanceGameResponse getBalanceGameResponse(LocalDate date, Long userId) {
         BalanceGame game = balanceGameRepository.findById(date)
-                .orElseThrow(() -> new RuntimeException("해당 날짜의 밸런스 게임이 없습니다."));
+                .orElseThrow(BalaceGameNotFoundException::new);
 
         // 사용자의 투표 여부 확인
         return balanceGameVoteRepository.findByIdUserIdAndIdGameDate(userId, date)
@@ -45,7 +47,7 @@ public class BalanceGameService {
 
     public BalanceGame createBalanceGame(BalanceGameRequest request) {
         if (balanceGameRepository.existsById(request.getGameDate())) {
-            throw new IllegalArgumentException("이미 해당 날짜의 밸런스 게임이 존재합니다.");
+            throw new AlreadyExistBalanceGameDateException(request.getGameDate());
         }
 
         BalanceGame game = new BalanceGame(
@@ -58,8 +60,16 @@ public class BalanceGameService {
     }
 
     public BalanceGame updateBalanceGame(BalanceGameRequest request) {
+        // 1. 게임이 없을경우 불가
+        // 2. 투표를 한사람이 있을 경우 불가.
+
         BalanceGame existing = balanceGameRepository.findById(request.getGameDate())
-                .orElseThrow(() -> new RuntimeException("수정할 밸런스 게임이 없습니다."));
+                .orElseThrow(BalaceGameNotFoundException::new);
+
+        boolean alreadyVoted = balanceGameVoteRepository.existsByIdGameDate(request.getGameDate());
+        if (alreadyVoted) {
+            throw new AlreadyBalanceGameVotedException();
+        }
 
         existing.updateBalanceGame(request.getQuestion(), request.getOptionA(), request.getOptionB());
         return balanceGameRepository.save(existing);
@@ -68,12 +78,20 @@ public class BalanceGameService {
 
     public void vote(Long userid, BalanceGameVoteRequest request) {
 
+        //1. 당일게임이 아닌경우 불가
+        //2. 게임이 없을 경우 불가
+        //3. 이미 투표를 했을경우 불가
+
+        if(!request.getGameDate().equals(LocalDate.now())) {
+            throw new OnlyVoteTodayBalanceGameException();
+        }
+
         balanceGameRepository.findById(request.getGameDate())
-                .orElseThrow(() -> new RuntimeException("오늘의 밸런스 게임이 없습니다."));
+                .orElseThrow(BalaceGameNotFoundException::new);
 
         boolean alreadyVoted = balanceGameVoteRepository.existsByIdUserIdAndIdGameDate(userid, request.getGameDate());
         if (alreadyVoted) {
-            throw new IllegalStateException("이미 투표한 게임입니다.");
+            throw new AlreadyBalanceGameVotedUserException();
         }
 
         BalanceGameVote vote = new BalanceGameVote(userid, request.getGameDate(), request.getChoice());
