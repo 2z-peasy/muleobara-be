@@ -1,5 +1,6 @@
 package com.pj2z.pj2zbe.balanceGame.entity;
 
+import com.pj2z.pj2zbe.balanceGame.entity.enums.BalanceGameVoteChoice;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Getter;
@@ -16,6 +17,9 @@ public class BalanceGame {
     private String optionA;
     private String optionB;
 
+    private Long optionACount;
+    private Long optionBCount;
+
     public BalanceGame() {
     }
 
@@ -24,6 +28,8 @@ public class BalanceGame {
         this.question = question;
         this.optionA = optionA;
         this.optionB = optionB;
+        this.optionACount = 0L;
+        this.optionBCount = 0L;
     }
 
 
@@ -35,4 +41,13 @@ public class BalanceGame {
          this.optionA = optionA;
          this.optionB = optionB;
     }
+
+    public void incrementOptionCount(BalanceGameVoteChoice vote) {
+        if(vote == BalanceGameVoteChoice.A) {
+            optionACount++;
+        }else if(vote == BalanceGameVoteChoice.B) {
+            optionBCount++;
+        }
+    }
+
 }

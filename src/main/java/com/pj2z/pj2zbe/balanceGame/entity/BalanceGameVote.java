@@ -21,6 +21,7 @@ public class BalanceGameVote {
 
 
 
+
     public BalanceGameVote() {}
 
     public BalanceGameVote(BalanceGameVoteId id, BalanceGameVoteChoice choice) {

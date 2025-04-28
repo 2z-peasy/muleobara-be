@@ -9,6 +9,7 @@ import com.pj2z.pj2zbe.balanceGame.exception.*;
 import com.pj2z.pj2zbe.balanceGame.repository.BalanceGameRepository;
 import com.pj2z.pj2zbe.balanceGame.repository.BalanceGameVoteRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -66,6 +67,7 @@ public class BalanceGameService {
         BalanceGame existing = balanceGameRepository.findById(request.getGameDate())
                 .orElseThrow(BalaceGameNotFoundException::new);
 
+        //Balance게임에 있는 카운트로 해도 될듯
         boolean alreadyVoted = balanceGameVoteRepository.existsByIdGameDate(request.getGameDate());
         if (alreadyVoted) {
             throw new AlreadyBalanceGameVotedException();
@@ -75,9 +77,9 @@ public class BalanceGameService {
         return balanceGameRepository.save(existing);
     }
 
-
+    //투표와 득표율이 같이 적용되도록 추가
+    @Transactional
     public void vote(Long userid, BalanceGameVoteRequest request) {
-
         //1. 당일게임이 아닌경우 불가
         //2. 게임이 없을 경우 불가
         //3. 이미 투표를 했을경우 불가
@@ -86,7 +88,7 @@ public class BalanceGameService {
             throw new OnlyVoteTodayBalanceGameException();
         }
 
-        balanceGameRepository.findById(request.getGameDate())
+        BalanceGame balanceGame = balanceGameRepository.findById(request.getGameDate())
                 .orElseThrow(BalaceGameNotFoundException::new);
 
         boolean alreadyVoted = balanceGameVoteRepository.existsByIdUserIdAndIdGameDate(userid, request.getGameDate());
@@ -95,6 +97,11 @@ public class BalanceGameService {
         }
 
         BalanceGameVote vote = new BalanceGameVote(userid, request.getGameDate(), request.getChoice());
+
         balanceGameVoteRepository.save(vote);
+
+        // 득표 수 업데이트
+        balanceGame.incrementOptionCount(request.getChoice());
+        balanceGameRepository.save(balanceGame);
     }
 }
