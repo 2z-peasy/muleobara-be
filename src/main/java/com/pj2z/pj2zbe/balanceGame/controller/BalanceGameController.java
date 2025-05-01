@@ -1,10 +1,12 @@
 package com.pj2z.pj2zbe.balanceGame.controller;
 
 import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameRequest;
+import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameResponse;
 import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameVoteRequest;
 import com.pj2z.pj2zbe.balanceGame.entity.BalanceGame;
 import com.pj2z.pj2zbe.balanceGame.service.BalanceGameService;
 import com.pj2z.pj2zbe.common.custom.UserCheck;
+import com.pj2z.pj2zbe.common.exception.BalanceGameException;
 import com.pj2z.pj2zbe.user.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +24,23 @@ public class BalanceGameController {
     public BalanceGameController(BalanceGameService balanceGameService) {
         this.balanceGameService = balanceGameService;
     }
+
     @GetMapping("/today")
     public ResponseEntity<Object> getTodaybalanceGame(@UserCheck User user) {
         try {
-            BalanceGame todayGame = balanceGameService.getTodayGame();
+            BalanceGameResponse todayGame = balanceGameService.getTodayGame(user.getId());
 
             return ResponseEntity.ok(todayGame);
+        } catch (BalanceGameException ex) {
+            return ResponseEntity.status(ex.getStatus())
+                    .body(Map.of(
+                            "message", ex.getMessage()
+                    ));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
-                    "message", ex.getMessage()
-            ));
+                            "message", ex.getMessage()
+                    ));
         }
     }
 
@@ -41,11 +49,18 @@ public class BalanceGameController {
     public ResponseEntity<Object> getBalanceGame(@UserCheck User user, @RequestParam("date") String dateStr) {
         try {
             LocalDate date = LocalDate.parse(dateStr);
-            BalanceGame game = balanceGameService.getBalanceGameByDate(date);
+            BalanceGameResponse game = balanceGameService.getBalanceGameByDate(date, user.getId());
             return ResponseEntity.ok(game);
+        } catch (BalanceGameException ex) {
+            return ResponseEntity.status(ex.getStatus())
+                    .body(Map.of(
+                            "message", ex.getMessage()
+                    ));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("message", ex.getMessage()));
+                    .body(Map.of(
+                            "message", ex.getMessage()
+                    ));
         }
     }
 
@@ -55,6 +70,11 @@ public class BalanceGameController {
 
             BalanceGame makeGame = balanceGameService.createBalanceGame(request);
             return ResponseEntity.ok(makeGame);
+        } catch (BalanceGameException ex) {
+            return ResponseEntity.status(ex.getStatus())
+                    .body(Map.of(
+                            "message", ex.getMessage()
+                    ));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
@@ -68,6 +88,11 @@ public class BalanceGameController {
         try {
             BalanceGame updateGame = balanceGameService.updateBalanceGame(request);
             return ResponseEntity.ok(updateGame);
+        }catch (BalanceGameException ex) {
+            return ResponseEntity.status(ex.getStatus())
+                    .body(Map.of(
+                            "message", ex.getMessage()
+                    ));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
@@ -77,10 +102,24 @@ public class BalanceGameController {
 
     }
 
+    // 투표관련되서는 밸런스게임과 커뮤니티의 투표가 별도이며 밸런스게임 하나의 종속적인 투표기능이기 떄문에 합쳤습니다.
     @PostMapping("/vote")
     public ResponseEntity<Object> voteGame(@UserCheck User user, @RequestBody BalanceGameVoteRequest request) {
-       // balanceGameService.vote(user.getId(),request.getGameDate(), request.getChoice());
-       // return ResponseEntity.ok().build();
-        return null;
+        try {
+            balanceGameService.vote(user.getId(), request);
+            return ResponseEntity.ok(Map.of(
+                    "message", "투표완료"
+            ));
+        } catch (BalanceGameException ex) {
+            return ResponseEntity.status(ex.getStatus())
+                    .body(Map.of(
+                            "message", ex.getMessage()
+                    ));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "message", ex.getMessage()
+                    ));
+        }
     }
 }

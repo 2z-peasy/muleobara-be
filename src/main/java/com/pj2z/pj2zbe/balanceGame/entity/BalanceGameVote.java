@@ -5,6 +5,7 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.Getter;
 
 import java.time.LocalDate;
 
@@ -14,6 +15,7 @@ public class BalanceGameVote {
     @EmbeddedId
     private BalanceGameVoteId id;
 
+    @Getter
     @Enumerated(EnumType.STRING)
     private BalanceGameVoteChoice choice;
 
@@ -29,4 +31,5 @@ public class BalanceGameVote {
         this.id = new BalanceGameVoteId(gameDate, userid);
         this.choice = choice;
     }
+
 }
