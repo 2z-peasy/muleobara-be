@@ -51,6 +51,13 @@ public class GlobalExceptionHandler {
         return getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
+    @ExceptionHandler(BalanceGameException.class)
+    public ResponseEntity<Map<String, Object>> handleBalanceGameException(BalanceGameException e) {
+        log.error(e.getMessage());
+        return getErrorResponse(e.getStatus(), e.getMessage());
+    }
+
+
     public ResponseEntity<Map<String, Object>> getErrorResponse(HttpStatus status, String message) {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("status", status.name());
