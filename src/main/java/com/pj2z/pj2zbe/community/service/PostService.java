@@ -8,9 +8,9 @@ import com.pj2z.pj2zbe.community.exception.VoteDeadlineException;
 import com.pj2z.pj2zbe.community.repository.PostRepository;
 import com.pj2z.pj2zbe.community.repository.VoteRepository;
 import com.pj2z.pj2zbe.user.entity.User;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 

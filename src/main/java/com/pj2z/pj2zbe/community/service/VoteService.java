@@ -6,13 +6,14 @@ import com.pj2z.pj2zbe.community.entity.Vote;
 import com.pj2z.pj2zbe.community.entity.VoteRecord;
 import com.pj2z.pj2zbe.community.entity.VoteType;
 import com.pj2z.pj2zbe.community.exception.AlreadyVotedException;
+import com.pj2z.pj2zbe.community.exception.VoteNotFoundException;
 import com.pj2z.pj2zbe.community.exception.VoteTypeException;
 import com.pj2z.pj2zbe.community.repository.VoteRecordRepository;
 import com.pj2z.pj2zbe.community.repository.VoteRepository;
 import com.pj2z.pj2zbe.user.entity.User;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,15 +31,15 @@ public class VoteService {
 
         createVoteRecord(user, vote, voteRequest.voteType());
 
-        double totalVoteCount = vote.getVoteACount() + vote.getVoteBCount();
-        return new VoteResponse(
-                voteId,
-                vote.getVoteACount(),
-                vote.getVoteBCount(),
-                totalVoteCount,
-                vote.getVoteACount() / totalVoteCount * 100,
-                vote.getVoteBCount() / totalVoteCount * 100
-        );
+        return VoteResponse.from(vote);
+    }
+
+    @Transactional(readOnly = true)
+    public VoteResponse retrieve(Long voteId) {
+        Vote vote = voteRepository.findById(voteId)
+                .orElseThrow(()-> new VoteNotFoundException("해당 투표가 존재하지 않습니다."));
+
+        return VoteResponse.from(vote);
     }
 
     private void checkVoteRecordExists(Long userId, Long voteId) {
