@@ -25,4 +25,10 @@ public class VoteController {
         VoteResponse response = voteService.updateVoteCount(user, voteId, voteRequest);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @GetMapping("/{voteId}")
+    public ResponseEntity<VoteResponse> retrieveVote(@PathVariable Long voteId) {
+        VoteResponse response = voteService.retrieve(voteId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
