@@ -30,7 +30,7 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponse> retrievePost(@UserCheck User user,
-                                                            Long postId) {
+                                                     @PathVariable Long postId) {
         PostResponse response = postService.retrieve(postId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
