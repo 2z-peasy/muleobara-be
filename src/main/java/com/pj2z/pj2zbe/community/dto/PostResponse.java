@@ -10,6 +10,7 @@ public record PostResponse(
         String title,
         String content,
         Long authorId,
+        Long likeCount,
         VoteResponse voteResponse
 ) {
     public static PostResponse from(Post post, Vote vote) {
@@ -18,7 +19,8 @@ public record PostResponse(
                 .title(post.getTitle())
                 .content(post.getContent())
                 .authorId(post.getAuthorId())
-                .voteResponse(VoteResponse.from(vote))
+                .likeCount(post.getLikeCount())
+                .voteResponse(com.pj2z.pj2zbe.community.dto.VoteResponse.from(vote))
                 .build();
     }
 }
