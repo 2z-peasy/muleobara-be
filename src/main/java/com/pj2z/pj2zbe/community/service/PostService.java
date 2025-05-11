@@ -50,7 +50,7 @@ public class PostService {
     }
 
     public List<PostResponse> retrieveHotPosts(){
-        List<Post> posts = postRepository.findTop10ByOrderByLikeCountDesc();
+        List<Post> posts = postRepository.findTopPostsByToday();
         return posts.stream()
                 .map(post -> {
                     Vote vote = voteRepository.findByPostId(post.getId())
