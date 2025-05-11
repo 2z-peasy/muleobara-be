@@ -21,7 +21,7 @@ public class Post extends BaseTimeEntity {
     private String content;
     private Long authorId;
     // 공감, 댓글, 투표 등 존재
-    private Long likeCount;
+    private Long likeCount = 0L;
 
     public Post(String title, String content, Long authorId) {
         this.title = title;
