@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -46,6 +47,17 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 투표가 없습니다."));
 
         return PostResponse.from(post, vote);
+    }
+
+    public List<PostResponse> retrieveHotPosts(){
+        List<Post> posts = postRepository.findTop10ByOrderByLikeCountDesc();
+        return posts.stream()
+                .map(post -> {
+                    Vote vote = voteRepository.findByPostId(post.getId())
+                            .orElseThrow(() -> new IllegalArgumentException("해당 투표가 없습니다."));
+                    return PostResponse.from(post, vote);
+                })
+                .toList();
     }
 
     private void validateVoteDeadline(LocalDateTime voteDeadline) {

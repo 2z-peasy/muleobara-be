@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/community/posts")
@@ -30,6 +32,12 @@ public class PostController {
     public ResponseEntity<PostResponse> retrievePost(@UserCheck User user,
                                                             Long postId) {
         PostResponse response = postService.retrieve(postId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/hot")
+    public ResponseEntity<List<PostResponse>> retrieveHotPosts(@UserCheck User user) {
+        List<PostResponse> response = postService.retrieveHotPosts();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
