@@ -2,6 +2,7 @@ package com.pj2z.pj2zbe.community.service;
 
 import com.pj2z.pj2zbe.community.dto.PostCreateRequest;
 import com.pj2z.pj2zbe.community.dto.PostCreateResponse;
+import com.pj2z.pj2zbe.community.dto.PostResponse;
 import com.pj2z.pj2zbe.community.entity.Post;
 import com.pj2z.pj2zbe.community.entity.Vote;
 import com.pj2z.pj2zbe.community.exception.VoteDeadlineException;
@@ -36,6 +37,15 @@ public class PostService {
         voteRepository.save(vote);
 
         return new PostCreateResponse(post.getId(), vote.getId());
+    }
+
+    public PostResponse retrieve(Long postId){
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+        Vote vote = voteRepository.findByPostId(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 투표가 없습니다."));
+
+        return PostResponse.from(post, vote);
     }
 
     private void validateVoteDeadline(LocalDateTime voteDeadline) {

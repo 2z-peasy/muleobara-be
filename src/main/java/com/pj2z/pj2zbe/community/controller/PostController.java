@@ -3,16 +3,14 @@ package com.pj2z.pj2zbe.community.controller;
 import com.pj2z.pj2zbe.common.custom.UserCheck;
 import com.pj2z.pj2zbe.community.dto.PostCreateRequest;
 import com.pj2z.pj2zbe.community.dto.PostCreateResponse;
+import com.pj2z.pj2zbe.community.dto.PostResponse;
 import com.pj2z.pj2zbe.community.service.PostService;
 import com.pj2z.pj2zbe.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,5 +24,12 @@ public class PostController {
                                                          @Valid @RequestBody PostCreateRequest request) {
         PostCreateResponse response = postService.create(user, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponse> retrievePost(@UserCheck User user,
+                                                            Long postId) {
+        PostResponse response = postService.retrieve(postId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
