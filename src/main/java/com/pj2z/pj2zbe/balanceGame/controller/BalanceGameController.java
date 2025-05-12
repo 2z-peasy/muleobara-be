@@ -5,6 +5,7 @@ import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameResponse;
 import com.pj2z.pj2zbe.balanceGame.dto.BalanceGameVoteRequest;
 import com.pj2z.pj2zbe.balanceGame.entity.BalanceGame;
 import com.pj2z.pj2zbe.balanceGame.service.BalanceGameService;
+import com.pj2z.pj2zbe.common.custom.AuthCheck;
 import com.pj2z.pj2zbe.common.custom.UserCheck;
 import com.pj2z.pj2zbe.common.exception.BalanceGameException;
 import com.pj2z.pj2zbe.user.entity.User;
@@ -64,8 +65,9 @@ public class BalanceGameController {
         }
     }
 
+    @AuthCheck
     @PostMapping("/")
-    public ResponseEntity<Object> createGame(@UserCheck User user,@RequestBody BalanceGameRequest request) {
+    public ResponseEntity<Object> createGame(@RequestBody BalanceGameRequest request) {
         try {
 
             BalanceGame makeGame = balanceGameService.createBalanceGame(request);
@@ -83,8 +85,9 @@ public class BalanceGameController {
         }
     }
 
+    @AuthCheck
     @PutMapping("/")
-    public ResponseEntity<Object> updateGame(@UserCheck User user,@RequestBody BalanceGameRequest request) {
+    public ResponseEntity<Object> updateGame(@RequestBody BalanceGameRequest request) {
         try {
             BalanceGame updateGame = balanceGameService.updateBalanceGame(request);
             return ResponseEntity.ok(updateGame);
@@ -102,7 +105,6 @@ public class BalanceGameController {
 
     }
 
-    // 투표관련되서는 밸런스게임과 커뮤니티의 투표가 별도이며 밸런스게임 하나의 종속적인 투표기능이기 떄문에 합쳤습니다.
     @PostMapping("/vote")
     public ResponseEntity<Object> voteGame(@UserCheck User user, @RequestBody BalanceGameVoteRequest request) {
         try {
