@@ -28,6 +28,12 @@ public class Notification {
     @Column(name = "template_code", length = 50)
     private String templateCode;
 
+    @Column(name = "title", length = 25, nullable = false)
+    private String title;
+
+    @Enumerated(EnumType.STRING)
+    private NotificationCategory category;
+
     // 파라미터를 JSON 형태로 저장 (ex: {"user_name":"dohi", "quantity":"5"})
     @Column(name = "message_params", columnDefinition = "JSON")
     private String messageParams;
@@ -36,18 +42,22 @@ public class Notification {
     @Column(name = "rendered_message", columnDefinition = "TEXT")
     private String renderedMessage;
 
-    @Column(name = "is_read", nullable = false)
-    private Boolean isRead = false;
+    @Column(name = "read_YN", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private NotificationYN readYN = NotificationYN.N;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "read_at")
-    private LocalDateTime readAt;
+    @Column(name = "sent_at")
+    private LocalDateTime sentAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
+    public enum NotificationYN{
+        Y,N
+    }
 }
