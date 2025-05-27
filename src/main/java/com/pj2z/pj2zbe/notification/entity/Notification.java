@@ -42,6 +42,7 @@ public class Notification {
     @Column(name = "rendered_message", columnDefinition = "TEXT")
     private String renderedMessage;
 
+    @Builder.Default
     @Column(name = "read_YN", nullable = false)
     @Enumerated(EnumType.STRING)
     private NotificationYN readYN = NotificationYN.N;
