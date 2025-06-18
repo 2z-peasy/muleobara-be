@@ -1,5 +1,6 @@
 package com.pj2z.pj2zbe.notification.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pj2z.pj2zbe.notification.entity.Notification;
 import com.pj2z.pj2zbe.notification.entity.NotificationTemplate;
 import com.pj2z.pj2zbe.notification.repository.NotificationRepository;
@@ -57,7 +58,7 @@ public class NotificationService {
 
     private String convertToJson(Map<String, String> params) {
         try {
-            return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(params);
+            return new ObjectMapper().writeValueAsString(params);
         } catch (Exception e) {
             return "{}";
         }

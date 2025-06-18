@@ -2,6 +2,7 @@ package com.pj2z.pj2zbe.notification.event;
 
 import lombok.Getter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -14,6 +15,11 @@ public class NotificationEvent {
         this.receiverId = receiverId;
         this.templateCode = templateCode;
         this.params = params;
+    }
+    public NotificationEvent(Long receiverId, String templateCode) {
+        this.receiverId = receiverId;
+        this.templateCode = templateCode;
+        this.params = new HashMap<>();
     }
 
 }
