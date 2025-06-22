@@ -27,18 +27,16 @@ public class NotificationService {
 
         // 템플릿에 파라미터 적용
         String renderedMessage = renderTemplate(template, params);
-
+        String title = template.getTitle();
         Notification notification = Notification.builder()
                 .userId(userId)
                 .templateCode(templateCode)
                 .messageParams(convertToJson(params))
+                .title(title)
                 .renderedMessage(renderedMessage)
                 .build();
 
-        boolean sendYn = notificationClient.sendNotification(notification);
-        if (sendYn) {
-            notification.setSentAt(LocalDateTime.now());
-        }
+        notificationClient.sendNotification(notification);
 
         sendNotificationLog(notification);
 
