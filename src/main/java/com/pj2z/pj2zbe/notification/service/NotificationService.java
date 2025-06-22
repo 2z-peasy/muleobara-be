@@ -1,6 +1,7 @@
 package com.pj2z.pj2zbe.notification.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pj2z.pj2zbe.notification.Client.NotificationClient;
 import com.pj2z.pj2zbe.notification.entity.Notification;
 import com.pj2z.pj2zbe.notification.entity.NotificationTemplate;
 import com.pj2z.pj2zbe.notification.repository.NotificationRepository;
@@ -8,6 +9,7 @@ import com.pj2z.pj2zbe.notification.repository.NotificationTemplateRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
@@ -16,6 +18,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final NotificationTemplateRepository notificationTemplateRepository;
+    private final NotificationClient notificationClient;
 
 // 아직 구상중 하나도
     public void sendNotification(Long userId, String templateCode, Map<String, String> params) {
@@ -25,12 +28,6 @@ public class NotificationService {
         // 템플릿에 파라미터 적용
         String renderedMessage = renderTemplate(template, params);
 
-        sendNotificationLog(userId,templateCode,params,renderedMessage);
-
-    }
-
-    private void sendNotificationLog(Long userId, String templateCode, Map<String, String> params, String renderedMessage){
-        // 알림 저장 로직 (실제로는 Repository 사용)
         Notification notification = Notification.builder()
                 .userId(userId)
                 .templateCode(templateCode)
@@ -38,6 +35,16 @@ public class NotificationService {
                 .renderedMessage(renderedMessage)
                 .build();
 
+        boolean sendYn = notificationClient.sendNotification(notification);
+        if (sendYn) {
+            notification.setSentAt(LocalDateTime.now());
+        }
+
+        sendNotificationLog(notification);
+
+    }
+
+    private void sendNotificationLog(Notification notification ){
         notificationRepository.save(notification);
     }
 
